@@ -32,8 +32,8 @@ public class Task implements Serializable {
 	private Long deviceClientId;
 	
 	@ManyToOne (fetch = FetchType.EAGER)
-	@JoinColumn (name="owner_id")
-	private Human owner;
+	@JoinColumn (name="performer_id")
+	private Human performer;
 
 	@ManyToOne
 	@JoinColumn (name="author_id")
@@ -80,11 +80,7 @@ public class Task implements Serializable {
 	
 	public Task() {
 		id = 0L;
-		owner = null;
 		created = new Date();
-		begin = null;
-		expires = null;
-		done = null;
 		content = "";
 		comment = "";
 		difficulty = 0;
@@ -111,12 +107,8 @@ public class Task implements Serializable {
 	}
 
 	@JsonIgnore
-	public Human getOwner() {
-		return owner;
-	}
-	
-	public Long getOwnerId() {
-		return owner.getId();
+	public Human getPerformer() {
+		return performer;
 	}
 	
 	@JsonIgnore
@@ -202,8 +194,8 @@ public class Task implements Serializable {
 		this.deviceClientId = clientId;
 	}
 
-	public void setOwner(Human owner) {
-		this.owner = owner;
+	public void setPerformer(Human Performer) {
+		this.performer = performer;
 	}
 
 	public void setAuthor(Human author) {

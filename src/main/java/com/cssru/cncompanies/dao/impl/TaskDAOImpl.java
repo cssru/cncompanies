@@ -39,15 +39,9 @@ public class TaskDAOImpl implements TaskDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> listUndone(Human executor) {// выбираем только невыполненные задачи
-		ArrayList<Task> result = new ArrayList<Task>();
-		Query query;
-		List<Task> list;
-
-		if (managerLogin.getHuman().equals(executor)) {
-			// когда исполнитель является также и автором задачи - может изменять ее
-			query = sessionFactory
-					.getCurrentSession()
-					.createQuery("from Task as t where t.owner = :executor and t.author = :executor "
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Task as t where t.owner = :executor and t.author = :executor "
 							+ "and (t.done = 0 or t.done is null) and (t.archive = false or t.archive is null)");
 			query.setParameter("executor", executor);
 			list = query.list();
