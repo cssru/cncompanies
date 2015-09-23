@@ -23,63 +23,17 @@ public class TaskDAOImpl implements TaskDAO {
 
 	@Override
 	public void add(Task task) {
-		task.setLastModified(new Date());
-		if (managerLogin.getHuman().equals(executor)) {
-			// если исполнитель сам себе добавляет задачу
-			task.setOwner(executor);
-			task.setAuthor(executor);
-			sessionFactory.getCurrentSession().save(task);
-		} else {
-			// если задачу добавляет кто-то из начальства
-			Query query = sessionFactory
-					.getCurrentSession()
-					.createQuery("select count(*) from Human as h where h.id = :executorId and (h.unit.owner = :manager or h.unit.company.owner = :manager)");
-			query.setParameter("executorId", executor.getId());
-			query.setParameter("manager", managerLogin.getHuman());
-			Long humanCount = (Long)query.uniqueResult();
-			if (humanCount.longValue() > 0L) {
-				task.setOwner(executor);
-				task.setAuthor(managerLogin.getHuman());
-				sessionFactory.getCurrentSession().save(task);
-			}
-		}
+		sessionFactory.getCurrentSession().save(task);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> list(long lastModified) {
-		LinkedList<Task> result = new LinkedList<Task>();
-		Query query;
-		List<Task> list;
-
-		// задачи, которые поставил зарегистрированный пользователь
-		query = sessionFactory
+		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Task as t where (t.author = :manager "
-						+ "or (t.author <> t.owner and t.owner.unit.company.owner = :manager)) "
-						+ "and t.lastModified > :lastModified");
-		query.setParameter("lastModified", new Date(lastModified));
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(false);
-		}
-		result.addAll(list);
-
-		// задачи, поставленные зарегистрированному пользователю или его подчиненным
-		query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where t.author <> t.owner and t.author <> :manager and "
-						+ "(t.owner = :manager or t.owner.unit.owner = :manager) "
-						+ "and t.lastModified > :lastModified");
-		query.setParameter("lastModified", new Date(lastModified));
-		query.setParameter("manager", managerLogin.getHuman());
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(true);
-		}
-		result.addAll(list);
-
-		return result;
+				.createQuery("from Task as t where t.lastModified > :lastModified")
+				.setParameter("lastModified", new Date(lastModified))
+				.list();
 	}
 
 	@SuppressWarnings("unchecked")

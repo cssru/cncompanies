@@ -5,17 +5,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import com.cssru.cncompanies.proxy.TaskJsonProxy;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -33,18 +23,15 @@ public class Task implements Serializable {
 	@Transient
 	public static final int NON_ARCHIVE = 0;
 
-	@Transient
-	private boolean readonly; 
-	
 	@Id
-	@Column (name="id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column
+	@GeneratedValue
 	private Long id;
 	
 	@Transient
 	private Long deviceClientId;
 	
-	@ManyToOne (fetch=FetchType.EAGER)
+	@ManyToOne (fetch = FetchType.EAGER)
 	@JoinColumn (name="owner_id")
 	private Human owner;
 
@@ -52,25 +39,25 @@ public class Task implements Serializable {
 	@JoinColumn (name="author_id")
 	private Human author;
 
-	@Column (name="created")
+	@Column
 	private Date created;
 	
-	@Column (name="begin")
+	@Column
 	private Date begin;
 	
-	@Column (name="expires")
+	@Column
 	private Date expires;
 
-	@Column (name="done")
+	@Column
 	private Date done;
 	
-	@Column (name="content")
+	@Column
 	private String content;
 
-	@Column (name="comment")
+	@Column
 	private String comment;
 
-	@Column (name="difficulty")
+	@Column
 	private Integer difficulty;
 	
 	@Column (name="parent_task")
@@ -88,7 +75,7 @@ public class Task implements Serializable {
 	@Column (name="last_modified")
 	private Date lastModified;
 	
-	@OneToMany (mappedBy = "taskId", fetch=FetchType.EAGER)
+	@OneToMany (mappedBy = "taskId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<TaskMetadataElement> metadata;
 	
 	public Task() {
@@ -202,10 +189,6 @@ public class Task implements Serializable {
 		return metadata;
 	}
 	
-	public boolean isReadonly() {
-		return readonly;
-	}
-	
 	//setters
 	public void setId(Long id) {
 		this.id = id;
@@ -283,10 +266,6 @@ public class Task implements Serializable {
 		this.metadata = metadata;
 	}
 
-	public void setReadonly(boolean readonly) {
-		this.readonly = readonly;
-	}
-	
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof Task)) return false;
