@@ -16,8 +16,8 @@ public class TaskMetadataElement implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column (name="id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column
+	@GeneratedValue
 	private Long id;
 	
 	@Column (name = "task_id")

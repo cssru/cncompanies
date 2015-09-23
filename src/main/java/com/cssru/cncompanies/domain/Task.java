@@ -21,11 +21,11 @@ public class Task {
 	private Long id;
 
 	@ManyToOne (fetch = FetchType.EAGER)
-	@JoinColumn (name = "performer_id")
-	private Human performer;
+	@JoinColumn
+	private Human executor;
 
 	@ManyToOne
-	@JoinColumn (name = "author_id")
+	@JoinColumn
 	private Human author;
 
 	@Column
@@ -40,16 +40,16 @@ public class Task {
 	@Column
 	private Date done;
 	
-	@Column
+	@Column (length = 4096)
 	private String content;
 
-	@Column
+	@Column (length = 2048)
 	private String comment;
 
 	@Column
 	private Integer difficulty;
 	
-	@Column (name = "parent")
+	@Column
 	private Task parent;
 	
 	@Column (name="alert_time")
@@ -58,8 +58,8 @@ public class Task {
 	@Column (name = "is_archive", nullable = false, columnDefinition="TINYINT(1)")
 	private Boolean archive;
 	
-	@Column (name="project_id")
-	private Long projectId;
+	@Column
+	private Project project;
 	
 	@Column (name="last_modified")
 	private Date lastModified;
@@ -75,7 +75,6 @@ public class Task {
 		difficulty = 0;
 		alertTime = 0L;
 		archive = false;
-		projectId = -1L;
 		lastModified = created;
 		metadata = new HashSet<TaskMetadataElement>();
 	
@@ -90,8 +89,8 @@ public class Task {
 		return id;
 	}
 
-	public Human getPerformer() {
-		return performer;
+	public Human getExecutor() {
+		return executor;
 	}
 	
 	public Human getAuthor() {
@@ -150,8 +149,8 @@ public class Task {
 		return archive;
 	}
 	
-	public Long getProjectId() {
-		return projectId;
+	public Long getProject() {
+		return project;
 	}
 	
 	public Date getLastModified() {
@@ -167,8 +166,8 @@ public class Task {
 		this.id = id;
 	}
 
-	public void setPerformer(Human Performer) {
-		this.performer = performer;
+	public void setExecutor(Human executor) {
+		this.executor = executor;
 	}
 
 	public void setAuthor(Human author) {
@@ -215,8 +214,8 @@ public class Task {
 		this.archive = archive;
 	}
 	
-	public void setProjectId(Long projectId) {
-		this.projectId = projectId;
+	public void setProject(Project project) {
+		this.project = project;
 	}
 	
 	public void setLastModified(Date lastModified) {
