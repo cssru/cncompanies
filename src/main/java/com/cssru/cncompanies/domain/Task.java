@@ -12,31 +12,20 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.ANY, setterVisibility = Visibility.NONE)
 @Entity
 @Table (name="tasks")
-public class Task implements Serializable {
-	@Transient
-	private static final long serialVersionUID = 1L;
-	@Transient
-	public static final int ARCHIVE = 1;
-	@Transient
-	public static final int NON_ARCHIVE = 0;
-
+public class Task {
 	@Id
 	@Column
 	@GeneratedValue
 	private Long id;
-	
-	@Transient
-	private Long deviceClientId;
-	
+
 	@ManyToOne (fetch = FetchType.EAGER)
-	@JoinColumn (name="performer_id")
+	@JoinColumn (name = "performer_id")
 	private Human performer;
 
 	@ManyToOne
-	@JoinColumn (name="author_id")
+	@JoinColumn (name = "author_id")
 	private Human author;
 
 	@Column
@@ -60,13 +49,13 @@ public class Task implements Serializable {
 	@Column
 	private Integer difficulty;
 	
-	@Column (name="parent_task")
-	private Long parentTaskId;
+	@Column (name = "parent")
+	private Task parent;
 	
 	@Column (name="alert_time")
 	private Long alertTime;
 	
-	@Column (name="is_archive", nullable=false, columnDefinition="TINYINT(1)")
+	@Column (name = "is_archive", nullable = false, columnDefinition="TINYINT(1)")
 	private Boolean archive;
 	
 	@Column (name="project_id")
@@ -84,7 +73,6 @@ public class Task implements Serializable {
 		content = "";
 		comment = "";
 		difficulty = 0;
-		parentTaskId = -1L;
 		alertTime = 0L;
 		archive = false;
 		projectId = -1L;
@@ -102,16 +90,10 @@ public class Task implements Serializable {
 		return id;
 	}
 
-	public Long getClientId() {
-		return deviceClientId;
-	}
-
-	@JsonIgnore
 	public Human getPerformer() {
 		return performer;
 	}
 	
-	@JsonIgnore
 	public Human getAuthor() {
 		return author;
 	}
@@ -136,7 +118,6 @@ public class Task implements Serializable {
 		return expires;
 	}
 
-	@JsonIgnore
 	public Boolean getTaskDone() {
 		return done != null;
 	}
@@ -157,8 +138,8 @@ public class Task implements Serializable {
 		return difficulty;
 	}
 	
-	public Long getParentTaskId() {
-		return parentTaskId;
+	public Task getParentTask() {
+		return parent;
 	}
 	
 	public Long getAlertTime() {
@@ -184,14 +165,6 @@ public class Task implements Serializable {
 	//setters
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public void setServerId(Long serverId) {
-		this.id = serverId;
-	}
-
-	public void setClientId(Long clientId) {
-		this.deviceClientId = clientId;
 	}
 
 	public void setPerformer(Human Performer) {
@@ -232,10 +205,6 @@ public class Task implements Serializable {
 
 	public void setDifficulty(Integer difficulty) {
 		this.difficulty = difficulty;
-	}
-	
-	public void setParentTaskId(Long parentTaskId) {
-		this.parentTaskId = parentTaskId;
 	}
 	
 	public void setAlertTime(Long alertTime) {
