@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
 
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.ANY, setterVisibility = Visibility.NONE)
 @Entity
 @Table (name="units")
 public class Unit {
@@ -28,7 +27,7 @@ public class Unit {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn (nullable = false)
+	@JoinColumn
 	private Company company;
 	
 	@ManyToOne

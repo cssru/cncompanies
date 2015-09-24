@@ -27,49 +27,57 @@ public class UnitDAOImpl implements UnitDAO {
 	HumanDAO humanDAO;
 
 	@Override
-	public void addUnit(Unit unit) {
-		sessionFactory.getCurrentSession().save(unit);		
+	public void add(Unit unit) {
+		sessionFactory.getCurrentSession().save(unit);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Unit> listUnit(Company company) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Unit where company = :company");
-		query.setParameter("company", company);
-		return query.list();
+	public List<Unit> list(Company company) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Unit where company = :company")
+				.setParameter("company", company)
+				.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Unit> listUnitsWithOwner(Human unitOwner) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Unit as u where u.owner = :owner");
-		query.setParameter("owner", unitOwner);
-		return query.list();
+	public List<Unit> list(Human unitManager) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Unit as u where u.manager = :manager")
+				.setParameter("manager", unitManager)
+				.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Unit> listAllUnits(Human manager) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Unit as u where u.company.owner = :manager");
-		query.setParameter("manager", manager);
-		return query.list();
+	public List<Unit> listVisible(Human manager) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Unit as u where u.company.owner = :manager or u.owner = :manager")
+				.setParameter("manager", manager)
+				.list();
 	}
 
 	@Override
-	public void removeUnit(Unit unit) {
+	public void delete(Unit unit) {
 		sessionFactory.getCurrentSession().delete(unit);
 	}
 
 	@Override
-	public void updateUnit(Unit unit) {
+	public void update(Unit unit) {
 		sessionFactory.getCurrentSession().merge(unit);
 	}
 
 	@Override
-	public Unit getUnit(Long id) {
-		Query query = sessionFactory.getCurrentSession().createQuery("from Unit as u where u.id = :id");
-		query.setParameter("id", id);
-		return (Unit) query.uniqueResult();
+	public Unit get(Long id) {
+		return (Unit)sessionFactory
+				.getCurrentSession()
+				.createQuery("from Unit as u where u.id = :id")
+				.setParameter("id", id)
+				.uniqueResult();
 	}
 
 }

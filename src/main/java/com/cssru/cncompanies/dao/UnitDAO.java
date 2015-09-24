@@ -7,11 +7,11 @@ import com.cssru.cncompanies.domain.Unit;
 import java.util.List;
 
 public interface UnitDAO {
-	void addUnit(Unit unit);
-	List<Unit> listUnit(Company company);
-	List<Unit> listUnitsWithOwner(Human unitOwner);
-	List<Unit> listAllUnits(Human manager);
-	void removeUnit(Unit unit);
-	void updateUnit(Unit unit);
-	Unit getUnit(Long id);
+	void add(Unit unit);
+	List<Unit> list(Company company);
+	List<Unit> list(Human unitManager);
+	List<Unit> listVisible(Human manager);
+	void delete(Unit unit);
+	void update(Unit unit);
+	Unit get(Long id);
 }
