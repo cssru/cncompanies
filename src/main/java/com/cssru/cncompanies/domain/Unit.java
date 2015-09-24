@@ -20,45 +20,38 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 @JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.ANY, setterVisibility = Visibility.NONE)
 @Entity
 @Table (name="units")
-public class Unit implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
+public class Unit {
+
 	@Id
-	@Column (name="id")
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column
+	@GeneratedValue
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn (name="company_id")
+	@JoinColumn (nullable = false)
 	private Company company;
 	
 	@ManyToOne
-	@JoinColumn (name="owner_id")
-	private Human owner;
+	@JoinColumn
+	private Human manager;
 	
-	@Column (name="name")
+	@Column
 	private String name;
 
-	@Column (name="description")
+	@Column
 	private String description;
 	
-	@Column (name="parent_unit_id")
-	private Long parentUnitId;
+	@Column
+	private Unit parent;
 	
 	@OneToMany (mappedBy = "unit")
 	private Set<Human> humans;
 
 	//getters
-	@JsonIgnore
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	public Long getId() {
 		return id;
 	}
 
-	@JsonIgnore
 	public Company getCompany() {
 		return company;
 	}
@@ -67,15 +60,10 @@ public class Unit implements Serializable {
 		return company.getId();
 	}
 
-	@JsonIgnore
-	public Human getOwner() {
-		return owner;
+	public Human getManager() {
+		return manager;
 	}
 	
-	public Long getOwnerId() {
-		return owner.getId();
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -84,12 +72,10 @@ public class Unit implements Serializable {
 		return description;
 	}
 
-	@JsonIgnore
-	public Long getParentUnitId() {
-		return parentUnitId;
+	public Unit getParent() {
+		return parent;
 	}
 
-	@JsonIgnore
 	public Set<Human> getHumans() {
 		return humans;
 	}
@@ -103,8 +89,8 @@ public class Unit implements Serializable {
 		this.company = company;
 	}
 
-	public void setOwner(Human owner) {
-		this.owner = owner;
+	public void setManager(Human manager) {
+		this.manager = manager;
 	}
 
 	public void setName(String name) {
@@ -115,8 +101,8 @@ public class Unit implements Serializable {
 		this.description = description;
 	}
 
-	public void setParentUnitId(Long parentUnitId) {
-		this.parentUnitId = parentUnitId;
+	public void setParent(Unit parent) {
+		this.parent = parent;
 	}
 	
 	public void setHumans(Set<Human> humans) {
