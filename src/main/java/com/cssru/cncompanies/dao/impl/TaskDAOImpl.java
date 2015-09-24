@@ -172,147 +172,78 @@ public class TaskDAOImpl implements TaskDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> listArchiveWithAuthor(Human author) {
-		Query query = sessionFactory
+		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Task as t where t.author = :author and t.archive = true");
-		query.setParameter("author", author);
-		return query.list();
+				.createQuery("from Task as t where t.author = :author and t.archive = true")
+				.setParameter("author", author)
+				.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Task> listArchiveForSlave(Human manager) {
-		ArrayList<Task> result = new ArrayList<Task>();
-		Query query;
-		List<Task> list;
-		Human manager = managerLogin.getHuman();
-
-		// зашел руководитель подразделения или руководитель компании
-		// руководитель подразделения (руководитель компании) выбирает задачи, поставленные им самим исполнителю
-		query = sessionFactory
+		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Task as t where (t.author = :manager or (t.owner.unit.company.owner = :manager and t.author <> t.owner)) "
-						+ "and t.archive = true");
-		query.setParameter("manager", manager);
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(false);
-		}
-		result.addAll(list);
-
-		// руководитель подразделения выбирает задачи, поставленные исполнителю руководителем компании, при этом он не может изменять их
-		query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where t.author <> t.owner and t.author <> :manager "
-						+ "and t.archive = true and t.owner.unit.owner = :manager");
-		query.setParameter("manager", manager);
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(true);
-		}
-		result.addAll(list);
-
-		return result;
-	}
-
-
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Task> listVisible(Human manager) {// выбираем только не выполненные задачи, которые поставлены подчиненным managerLogin'а
-		ArrayList<Task> result = new ArrayList<Task>();
-		Query query;
-		List<Task> list;
-
-		// когда manager является также и автором задачи - может изменять ее
-		query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where (t.author = :manager or (t.author = t.owner.unit.owner and t.owner.unit.company.owner = :manager)) "
-						+ "and (t.archive = false or t.archive is null)");
-		query.setParameter("manager", manager);
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(false);
-		}
-		result.addAll(list);
-
-		// задачи, поставленные подчиненным manager'a руководителем компании
-		query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where t.author <> t.owner and t.author <> :manager and t.owner.unit.owner = :manager "
-						+ "and (t.archive = false or t.archive is null)");
-		query.setParameter("manager", manager);
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(true);
-		}
-		result.addAll(list);
-
-		return result;
+				.createQuery("from Task as t " +
+						"where (t.executor.unit.company.owner = :manager or t.executor.unit.manager = :manager) " +
+						"and t.archive = true")
+				.setParameter("manager", manager)
+				.list();
 	}
 
 
 
 
-
-
-	// statistic
+	// statistics
 	@Override
 	public Long getNormalCount(Human executor) {
-		Query query = sessionFactory
+		return (Long)sessionFactory
 				.getCurrentSession()
-				.createQuery("select count(*) from Task as t where t.owner = :owner and (t.archive = false or t.archive is null) and "
-						+ "(((t.owner.unit.owner = :manager or t.owner.unit.company.owner = :manager) and t.author <> t.owner) or t.author = :manager) and "
-						+ "(t.expires > :now and (t.expires - t.alertTime) > :now)");
-		query.setParameter("owner", executor);
-		query.setParameter("now", new Date());
-		return (Long)query.uniqueResult();
+				.createQuery("select count(*) from Task as t where t.executor = :executor and t.archive = false and "
+						+ "t.expires > :now and (t.expires - t.alertTime) > :now")
+				.setParameter("executor", executor)
+				.setParameter("now", new Date())
+				.uniqueResult();
 	}
 
 	@Override
 	public Long getExpiredCount(Human executor) {
-		Query query = sessionFactory
+		return (Long)sessionFactory
 				.getCurrentSession()
-				.createQuery("select count(*) from Task as t where t.owner = :owner and (t.archive = false or t.archive is null) and "
-						+ "(((t.owner.unit.owner = :manager or t.owner.unit.company.owner = :manager) and t.author <> t.owner) or t.author = :manager) and "
-						+ "(t.expires <= :now)");
-		query.setParameter("owner", executor);
-		query.setParameter("manager", managerLogin.getHuman());
-		query.setParameter("now", new Date());
-		return (Long)query.uniqueResult();
+				.createQuery("select count(*) from Task as t where t.executor = :executor and t.archive = false and "
+						+ "t.expires <= :now")
+				.setParameter("executor", executor)
+				.setParameter("now", new Date())
+				.uniqueResult();
 	}
 
 	@Override
 	public Long getNearestCount(Human executor) {
-		Query query = sessionFactory
+		return (Long)sessionFactory
 				.getCurrentSession()
-				.createQuery("select count(*) from Task as t where t.owner = :owner and (t.archive = false or t.archive is null) and "
-						+ "(((t.owner.unit.owner = :manager or t.owner.unit.company.owner = :manager) and t.author <> t.owner) or t.author = :manager) and "
-						+ "(t.expires > :now and :now >= (t.expires - t.alertTime))");
-		query.setParameter("owner", executor);
-		query.setParameter("now", new Date());
-		return (Long)query.uniqueResult();
+				.createQuery("select count(*) from Task as t where t.executor = :executor and t.archive = false and "
+						+ "t.expires > :now and :now >= (t.expires - t.alertTime)")
+				.setParameter("executor", executor)
+				.setParameter("now", new Date())
+				.uniqueResult();
 	}
 
 	@Override
 	public Long getDoneCount(Human executor) {
-		Query query = sessionFactory
+		return (Long)sessionFactory
 				.getCurrentSession()
-				.createQuery("select count(*) from Task as t where t.owner = :owner and (t.archive = false or t.archive is null) and "
-						+ "(((t.owner.unit.owner = :manager or t.owner.unit.company.owner = :manager) and t.author <> t.owner) or t.author = :manager) "
-						+ "and t.done <> 0");
-		query.setParameter("owner", executor);
-		return (Long)query.uniqueResult();
+				.createQuery("select count(*) from Task as t where t.executor = :executor and t.archive = false and t.done not null")
+				.setParameter("executor", executor)
+				.uniqueResult();
 	}
 
 	@Override
 	public Long getArchiveCount(Human executor) {
-		Query query = sessionFactory
+		return (Long)sessionFactory
 				.getCurrentSession()
-				.createQuery("select count(*) from Task as t where t.owner = :owner and (t.archive = true) and "
-						+ "(((t.owner.unit.owner = :manager or t.owner.unit.company.owner = :manager) and t.author <> t.owner) or t.author = :manager)");
-		query.setParameter("owner", executor);
-		return (Long)query.uniqueResult();
+				.createQuery("select count(*) from Task as t where t.executor = :executor and t.archive = true")
+				.setParameter("executor", executor)
+				.uniqueResult();
 	}
 
 	// for ajax requests
