@@ -20,8 +20,10 @@ public interface TaskDAO {
 	List<Task> listDoneForSlave(Human manager);
 	List<Task> listUndoneForSlave(Human manager);
 
-	List<Task> listVisible(Human manager);// all tasks visible for manager
-	List<Task> listWithAuthor(Human author);
+	List<Task> listDoneVisible(Human manager);// all done tasks visible for manager
+	List<Task> listUndoneVisible(Human manager);// all undone tasks visible for manager
+	List<Task> listDoneWithAuthor(Human author);
+	List<Task> listUndoneWithAuthor(Human author);
 
 	// archive
 	List<Task> listArchive(Human executor);

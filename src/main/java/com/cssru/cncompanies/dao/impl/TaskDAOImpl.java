@@ -103,6 +103,61 @@ public class TaskDAOImpl implements TaskDAO {
 				.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Task> listUndoneForSlave(Human manager) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Task as t " +
+						"where (t.executor.unit.company.owner = :manager or t.executor.unit.manager = :manager) " +
+						"and (t.done is null and t.archive = false)")
+				.setParameter("manager", manager)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Task> listDoneVisible(Human manager) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Task as t " +
+						"where (t.author = :manager or t.executor.unit.company.owner = :manager or t.executor.unit.manager = :manager) " +
+						"and (t.done not null and t.archive = false)")
+				.setParameter("manager", manager)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Task> listUndoneVisible(Human manager) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Task as t " +
+						"where (t.author = :manager or t.executor.unit.company.owner = :manager or t.executor.unit.manager = :manager) " +
+						"and (t.done is null and t.archive = false)")
+				.setParameter("manager", manager)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Task> listDoneWithAuthor(Human author) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Task as t where t.author = :author and t.archive = false and t.done not null")
+				.setParameter("author", author)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Task> listUndoneWithAuthor(Human author) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Task as t where t.author = :author and t.archive = false and t.done is null")
+				.setParameter("author", author)
+				.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -123,43 +178,6 @@ public class TaskDAOImpl implements TaskDAO {
 		query.setParameter("author", author);
 		return query.list();
 	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Task> listUndoneForSlave(Human manager) {
-		ArrayList<Task> result = new ArrayList<Task>();
-		Query query;
-		List<Task> list;
-
-		// зашел руководитель подразделения или руководитель компании
-		// руководитель подразделения (руководитель компании) выбирает задачи, поставленные им самим исполнителю
-		query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where (t.author = :manager or (t.owner.unit.company.owner = :manager and t.author <> t.owner)) "
-						+ "and (t.done = 0 or t.done is null) and (t.archive = false or t.archive is null)");
-		query.setParameter("manager", manager);
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(false);
-		}
-		result.addAll(list);
-
-		// руководитель подразделения выбирает задачи, поставленные исполнителю руководителем компании, при этом он не может изменять их
-		query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where t.author <> t.owner and t.author <> :manager "
-						+ "and (t.done = 0 or t.done is null) and (t.archive = false or t.archive is null) and "
-						+ "t.owner.unit.owner = :manager");
-		query.setParameter("manager", manager);
-		list = query.list();
-		for (Task t:list) {
-			t.setReadonly(true);
-		}
-		result.addAll(list);
-
-		return result;
-	}
-
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -234,16 +252,6 @@ public class TaskDAOImpl implements TaskDAO {
 	}
 
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Task> listWithAuthor(Human author) {
-		Query query = sessionFactory
-				.getCurrentSession()
-				.createQuery("from Task as t where t.author = :author and (t.archive = false or t.archive is null) and "
-						+ "(((t.owner.unit.owner = :manager or t.owner.unit.company.owner = :manager) and t.author <> t.owner) or t.author = :manager)");
-		query.setParameter("author", author);
-		return query.list();
-	}
 
 
 
