@@ -12,18 +12,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table (name="humans")
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.ANY, setterVisibility = Visibility.NONE)
-public class Human implements Serializable {
+public class Human {
 
-	private static final long serialVersionUID = 1L;
-
-	@Id 
-	@Column (name="id")
+	@Id
+	@Column
 	@GeneratedValue
 	private Long id;
-
-	@Transient
-	private Long deviceClientId;
 
 	@Column (nullable = false, length = 100)
 	private String surname;
@@ -38,7 +32,7 @@ public class Human implements Serializable {
 	private String note;
 
 	@Column
-	private Integer birthday;
+	private Date birthday;
 
 	@Column (name="last_modified")
 	private Date lastModified;
@@ -53,14 +47,6 @@ public class Human implements Serializable {
 	@JsonIgnore
 	public Long getId() {
 		return id;
-	}
-
-	public Long getServerId() {
-		return id;
-	}
-
-	public Long getClientId() {
-		return deviceClientId;
 	}
 
 	public String getName() {
@@ -79,7 +65,7 @@ public class Human implements Serializable {
 		return note;
 	}
 
-	public Integer getBirthday() {
+	public Date getBirthday() {
 		return birthday;
 	}
 
@@ -100,38 +86,9 @@ public class Human implements Serializable {
 		return unit != null ? unit.getName() : null;
 	}
 
-	public Long getUnitId() {
-		return unit != null ? unit.getId() : 0L;
-	}
-
-	@JsonIgnore
-	public String getFullName() {
-		return new StringBuilder()
-				.append(surname)
-				.append(" ")
-				.append(name)
-				.append(" ")
-				.append(lastname).toString();
-	}
-
-	@JsonIgnore
-	public String getShortName() {
-		return surname + " " +
-				(name != null ? (name.substring(0,1)+"."):"") + 
-						(lastname != null ? (lastname.substring(0, 1)+"."):"");
-	}
-
 	//setters
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public void setServerId(Long id) {
-		this.id = id;
-	}
-
-	public void setClientId(Long clientId) {
-		this.deviceClientId = id;
 	}
 
 	public void setSurname(String surname) {
@@ -150,7 +107,7 @@ public class Human implements Serializable {
 		this.note = note;
 	}
 
-	public void setBirthday(Integer birthday) {
+	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
 
@@ -173,9 +130,4 @@ public class Human implements Serializable {
 		return id.equals(human2.getId());
 	}
 	
-	@Override
-	public String toString() {
-		return getShortName();
-	}
-
 }
