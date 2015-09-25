@@ -14,15 +14,12 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@JsonAutoDetect(fieldVisibility = Visibility.NONE, getterVisibility = Visibility.ANY, setterVisibility = Visibility.NONE)
 @Entity
 @Table (name="companies")
-public class Company implements Serializable {
-	
-	private static final long serialVersionUID = 1L;
+public class Company {
 
 	@Id
-	@Column (name="id")
+	@Column
 	@GeneratedValue
 	private Long id;
 
@@ -30,7 +27,7 @@ public class Company implements Serializable {
 	private String name;
 	
 	@ManyToOne
-	@JoinColumn (name="owner")
+	@JoinColumn (nullable = false)
 	private Human owner;
 	
 	@Column
@@ -50,10 +47,6 @@ public class Company implements Serializable {
 		return owner;
 	}
 
-	public Long getOwnerId() {
-		return owner.getId();
-	}
-	
 	public String getDescription() {
 		return description;
 	}
