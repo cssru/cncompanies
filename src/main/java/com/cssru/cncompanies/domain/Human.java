@@ -77,13 +77,8 @@ public class Human {
 		return metadata;
 	}
 
-	@JsonIgnore
 	public Unit getUnit() {
 		return unit;
-	}
-
-	public String getUnitName() {
-		return unit != null ? unit.getName() : null;
 	}
 
 	//setters
