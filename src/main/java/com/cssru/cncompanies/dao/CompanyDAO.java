@@ -7,9 +7,9 @@ import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
 
 public interface CompanyDAO {
-	void addCompany(Company company);
-	List<Company> listCompany(Human owner);
-	void removeCompany(Company company);
-	void updateCompany(Company company);
-	Company getCompany(Long id);
+	void add(Company company);
+	List<Company> list(Human owner);
+	void delete(Company company);
+	void update(Company company);
+	Company get(Long id);
 }
