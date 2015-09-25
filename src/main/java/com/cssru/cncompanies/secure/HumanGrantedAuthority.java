@@ -2,8 +2,6 @@ package com.cssru.cncompanies.secure;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import com.cssru.cncompanies.domain.Role;
-
 public class HumanGrantedAuthority implements GrantedAuthority {
 	private static final long serialVersionUID = 1L;
 	private Role role;

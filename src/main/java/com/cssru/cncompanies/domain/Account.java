@@ -1,6 +1,7 @@
 package com.cssru.cncompanies.domain;
 
 import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -38,6 +39,12 @@ public class Account {
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private Set<ProvidedService> providedServices;
 
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+	private Set<Role> roles;
+
+	@Column
+	private Integer money;
+
 	@Column
 	private Long version;
 
@@ -74,14 +81,6 @@ public class Account {
 		return email;
 	}
 
-	public String getConfirmCode() {
-		return confirmCode;
-	}
-
-	public boolean isConfirmed() {
-		return confirmCode == null || confirmCode.length() == 0; 
-	}
-	
 	public Boolean getLocked() {
 		return locked;
 	}
@@ -92,10 +91,6 @@ public class Account {
 
 	public Set<ProvidedService> getProvidedServices() {
 		return providedServices;
-	}
-
-	public Date getPaidTill() {
-		return paidTill;
 	}
 
 	public Long getVersion() {
@@ -134,4 +129,27 @@ public class Account {
 		this.version = version;
 	}
 
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public Set<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	public Integer getMoney() {
+		return money;
+	}
+
+	public void setMoney(Integer money) {
+		this.money = money;
+	}
 }

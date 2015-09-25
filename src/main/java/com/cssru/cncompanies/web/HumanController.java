@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.domain.Role;
+import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.dto.AccountDto;
 import com.cssru.cncompanies.dto.ChangePasswordDto;

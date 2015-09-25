@@ -3,6 +3,7 @@ package com.cssru.cncompanies.dao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Human;
 
+import java.util.Date;
 import java.util.List;
 
 public interface AccountDAO {
@@ -13,5 +14,6 @@ public interface AccountDAO {
 	void delete(Long id);
 	void update(Account account);
 	List<Account> list();
+	List<Account> getExpired(Date date);
 	Long getEmployeesCount(Account account);
 }

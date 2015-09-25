@@ -1,7 +1,6 @@
 package com.cssru.cncompanies.secure;
 
 import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.domain.Role;
 import com.cssru.cncompanies.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;

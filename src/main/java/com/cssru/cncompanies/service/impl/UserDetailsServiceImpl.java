@@ -2,7 +2,7 @@ package com.cssru.cncompanies.service.impl;
 
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.domain.Role;
+import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.secure.HumanGrantedAuthority;

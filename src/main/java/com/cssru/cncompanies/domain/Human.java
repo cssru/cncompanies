@@ -37,7 +37,7 @@ public class Human {
 	@Column (name="last_modified")
 	private Date lastModified;
 
-	@OneToMany (mappedBy = "human", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany (mappedBy = "human", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<HumanMetadataElement> metadata;
 
 	@ManyToOne (fetch = FetchType.EAGER)

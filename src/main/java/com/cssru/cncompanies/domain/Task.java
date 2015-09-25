@@ -64,7 +64,7 @@ public class Task {
 	@Column (name="last_modified")
 	private Date lastModified;
 	
-	@OneToMany (mappedBy = "taskId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany (mappedBy = "task", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<TaskMetadataElement> metadata;
 	
 	public Task() {

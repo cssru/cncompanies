@@ -1,10 +1,12 @@
 package com.cssru.cncompanies.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.cssru.cncompanies.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,20 +38,20 @@ public class AccountServiceImpl implements AccountService {
 	private HumanDAO humanDAO;
 
 	@Autowired
-	BCryptPasswordEncoder passwordEncoder;
+	PasswordEncoder passwordEncoder;
 
 	@Transactional
 	@Override
-	public Account createAccount(AccountDto accountDto) {
-		return createAccount(accountDto, null);
+	public Account create(AccountDto accountDto) {
+		return create(accountDto, null);
 	}
-	
+
 	@Transactional
 	@Override
-	public Account createAccount(AccountDto accountDto, Unit unit) {
+	public Account create(AccountDto accountDto, Unit unit) {
 		Account account = new Account();
 		account.setLogin(accountDto.getLogin());
-		account.setPassword(accountDto.getPassword());
+		account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
 		account.setEmail(accountDto.getEmail());
 		
 		Human human = new Human();
@@ -64,53 +66,43 @@ public class AccountServiceImpl implements AccountService {
 		}
 		
 		account.setHuman(human);
-		add(account); // password encrypts here
+		humanDAO.add(human);
+		accountDAO.add(account);
+
 		return account;
 	}
 
 	@Transactional (readOnly = true)
 	@Override
-	public Login getLogin(String userName) {
-		return loginDAO.getLogin(userName);
+	public Account get(String userName) {
+		return accountDAO.get(userName);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
-	public Login getLogin(Long id) {
-		return loginDAO.getLogin(id);
+	public Account get(Long id) {
+		return accountDAO.get(id);
 	}
 
-	@Transactional
-	private void addLogin(Login login) {
-		login.setPassword(passwordEncoder.encode(login.getPassword()));
-		humanDAO.addHuman(login.getHuman());
-		loginDAO.addLogin(login);
+	@Transactional (readOnly = true)
+	@Override
+	public Account get(Human human) {
+		return accountDAO.get(human);
 	}
 
 	@Transactional
 	@Override
-	public void removeLogin(Login login) {
-		loginDAO.removeLogin(login);
+	public void delete(Long id) {
+		accountDAO.delete(id);
 	}
 
 	@Transactional
 	@Override
-	public void removeUser(Login login) throws AccessDeniedException {
-		List<Company> companies = companyService.listCompany(login);
-		for (Company c : companies) companyService.removeCompany(c.getId(), login);
-		// remove user's own tasks
-		List<Task> tasks = taskService.listTaskWithAuthor(login.getHuman(), login);
-		for (Task t : tasks) taskService.removeTask(t.getId(), login);
-		Human human = login.getHuman();
-		loginDAO.removeLogin(login);
-		humanDAO.removeHuman(human);
-	}
-
-	@Transactional
-	@Override
-	public void removeExpiredLogins(Long currentTime) {
-		loginDAO.removeExpiredLogins(currentTime);
-		humanDAO.removeHumansWithoutLogins();
+	public void removeExpired(Date now) {
+		List <Account> expired = accountDAO.getExpired(now);
+        for (Account account:expired) {
+            accountDAO.delete(account.getId());
+        }
 	}
 
 	@Transactional
@@ -123,13 +115,6 @@ public class AccountServiceImpl implements AccountService {
 		loginDAO.updateLogin(login);
 	}
 
-
-	@Transactional (readOnly = true)
-	@Override
-	public Login getLogin(Human human) {
-		// TODO 
-		return loginDAO.getLogin(human);
-	}
 
 	@Transactional (readOnly = true)
 	@Override

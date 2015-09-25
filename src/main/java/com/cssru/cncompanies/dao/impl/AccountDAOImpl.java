@@ -1,5 +1,6 @@
 package com.cssru.cncompanies.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import com.cssru.cncompanies.domain.Account;
@@ -69,7 +70,17 @@ public class AccountDAOImpl implements AccountDAO {
 	public List<Account> list() {
 		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Login")
+				.createQuery("from Account")
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Account> getExpired(Date date) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Account where expired < :date")
+				.setParameter("date", date)
 				.list();
 	}
 
