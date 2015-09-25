@@ -55,10 +55,6 @@ public class Unit {
 		return company;
 	}
 
-	public Long getCompanyId() {
-		return company.getId();
-	}
-
 	public Human getManager() {
 		return manager;
 	}
