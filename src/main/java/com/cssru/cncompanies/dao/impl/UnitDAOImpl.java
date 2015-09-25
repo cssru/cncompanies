@@ -63,7 +63,11 @@ public class UnitDAOImpl implements UnitDAO {
 
 	@Override
 	public void delete(Unit unit) {
-		sessionFactory.getCurrentSession().delete(unit);
+		Unit persistentUnit = (Unit)sessionFactory
+				.getCurrentSession()
+				.load(Unit.class, unit.getId());
+		if (persistentUnit != null)
+			sessionFactory.getCurrentSession().delete(persistentUnit);
 	}
 
 	@Override
