@@ -20,13 +20,13 @@ public class CompanyDAOImpl implements CompanyDAO {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void addCompany(Company company) {
+	public void add(Company company) {
 		sessionFactory.getCurrentSession().save(company);		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Company> listCompany(Human owner) {
+	public List<Company> list(Human owner) {
 		return sessionFactory
 				.getCurrentSession()
 				.createQuery("from Company where owner = :owner")
@@ -35,17 +35,17 @@ public class CompanyDAOImpl implements CompanyDAO {
 	}
 
 	@Override
-	public void removeCompany(Company company) {
+	public void delete(Company company) {
 		sessionFactory.getCurrentSession().delete(company);
 	}
 
 	@Override
-	public void updateCompany(Company company) {
+	public void update(Company company) {
 		sessionFactory.getCurrentSession().merge(company);
 	}
 
 	@Override
-	public Company getCompany(Long id) {
+	public Company get(Long id) {
 		return (Company)sessionFactory.getCurrentSession()
 				.createQuery("from Company as c where c.id = :id")
 				.setParameter("id", id)
