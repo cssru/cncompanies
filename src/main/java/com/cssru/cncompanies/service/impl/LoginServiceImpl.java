@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cssru.cncompanies.dao.HumanDAO;
-import com.cssru.cncompanies.dao.LoginDAO;
+import com.cssru.cncompanies.dao.AccountDAO;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
@@ -33,7 +33,7 @@ public class LoginServiceImpl implements LoginService {
 	private HumanService humanService;
 
 	@Autowired
-	private LoginDAO loginDAO;
+	private AccountDAO loginDAO;
 
 	@Autowired
 	private HumanDAO humanDAO;

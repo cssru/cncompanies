@@ -41,7 +41,7 @@ public class Human {
 	private List<HumanMetadataElement> metadata;
 
 	@ManyToOne (fetch = FetchType.EAGER)
-	@JoinColumn (name="unit_id")
+	@JoinColumn
 	private Unit unit;
 
 	@JsonIgnore

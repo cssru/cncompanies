@@ -42,7 +42,6 @@ public class Company {
 		return name;
 	}
 
-	@JsonIgnore
 	public Human getOwner() {
 		return owner;
 	}
