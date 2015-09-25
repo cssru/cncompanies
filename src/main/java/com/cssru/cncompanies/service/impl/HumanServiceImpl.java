@@ -15,7 +15,7 @@ import com.cssru.cncompanies.domain.Task;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.service.UnitService;
 import com.cssru.cncompanies.synch.ItemDescriptor;
@@ -34,7 +34,7 @@ public class HumanServiceImpl implements HumanService {
 	private UnitService unitService;
 
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Transactional
 	@Override
@@ -149,7 +149,7 @@ public class HumanServiceImpl implements HumanService {
 		long lastSynchTime = System.currentTimeMillis();
 		response.setLastSynchTime(lastSynchTime);
 		managerLogin.setLastSynch(new Date(lastSynchTime));
-		loginService.updateLogin(managerLogin, false);
+		accountService.updateLogin(managerLogin, false);
 		
 		
 		return response;

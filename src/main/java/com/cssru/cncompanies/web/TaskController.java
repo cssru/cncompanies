@@ -30,7 +30,7 @@ import com.cssru.cncompanies.proxy.TaskJsonProxy;
 import com.cssru.cncompanies.secure.BadLoginException;
 import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.synch.SynchContainer;
 import com.cssru.cncompanies.synch.SynchStatus;
@@ -38,7 +38,7 @@ import com.cssru.cncompanies.synch.SynchStatus;
 @Controller
 public class TaskController {
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Autowired
 	private LoginChecker loginChecker;

@@ -2,6 +2,7 @@ package com.cssru.cncompanies.service.impl;
 
 import java.util.List;
 
+import com.cssru.cncompanies.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,20 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cssru.cncompanies.dao.HumanDAO;
 import com.cssru.cncompanies.dao.AccountDAO;
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.domain.Task;
-import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.dto.AccountDto;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
 
 @Service
-public class LoginServiceImpl implements LoginService {
+public class AccountServiceImpl implements AccountService {
 	@Autowired
 	private CompanyService companyService;
 
@@ -33,7 +30,7 @@ public class LoginServiceImpl implements LoginService {
 	private HumanService humanService;
 
 	@Autowired
-	private AccountDAO loginDAO;
+	private AccountDAO accountDAO;
 
 	@Autowired
 	private HumanDAO humanDAO;
@@ -43,32 +40,32 @@ public class LoginServiceImpl implements LoginService {
 
 	@Transactional
 	@Override
-	public Login createLogin(AccountDto accountDto) {
-		return createLogin(accountDto, null);
+	public Account createAccount(AccountDto accountDto) {
+		return createAccount(accountDto, null);
 	}
 	
 	@Transactional
 	@Override
-	public Login createLogin(AccountDto accountDto, Unit unit) {
-		Login newLogin = new Login();
-		newLogin.setLogin(accountDto.getLogin());
-		newLogin.setPassword(accountDto.getPassword());
-		newLogin.setEmail(accountDto.getEmail());
+	public Account createAccount(AccountDto accountDto, Unit unit) {
+		Account account = new Account();
+		account.setLogin(accountDto.getLogin());
+		account.setPassword(accountDto.getPassword());
+		account.setEmail(accountDto.getEmail());
 		
-		Human newHuman = new Human();
-		newHuman.setSurname(accountDto.getSurname());
-		newHuman.setName(accountDto.getName());
-		newHuman.setLastName(accountDto.getLastName());
-		newHuman.setNote(accountDto.getNote());
-		newHuman.setBirthday(accountDto.getBirthday());
+		Human human = new Human();
+		human.setSurname(accountDto.getSurname());
+		human.setName(accountDto.getName());
+		human.setLastName(accountDto.getLastName());
+		human.setNote(accountDto.getNote());
+		human.setBirthday(accountDto.getBirthday());
 		
 		if (unit != null) {
-			newHuman.setUnit(unit);
+			human.setUnit(unit);
 		}
 		
-		newLogin.setHuman(newHuman);
-		addLogin(newLogin); // password encrypts here
-		return newLogin;
+		account.setHuman(human);
+		add(account); // password encrypts here
+		return account;
 	}
 
 	@Transactional (readOnly = true)

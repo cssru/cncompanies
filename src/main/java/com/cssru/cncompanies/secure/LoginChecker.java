@@ -2,7 +2,7 @@ package com.cssru.cncompanies.secure;
 
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Role;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoginChecker {
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 	
 
 	public void checkLogin(Login login) throws BadLoginException {
@@ -21,7 +21,7 @@ public class LoginChecker {
 		if (hasRole(Role.COMPANY_MANAGER)) {
 			managerLogin = login;
 		} else {
-			managerLogin = loginService.getLogin(login.getHuman().getUnit().getCompany().getOwner());
+			managerLogin = accountService.getLogin(login.getHuman().getUnit().getCompany().getOwner());
 			if (managerLogin == null) throw new BadLoginException(BadLoginException.ACCESS_DENIED, "Аккаунт руководителя компании не существует");
 		}
 		if (managerLogin.getLocked()) throw new BadLoginException(BadLoginException.LOGIN_LOCKED, "Аккаунт заблокирован");
@@ -34,7 +34,7 @@ public class LoginChecker {
 	}
 	
 	public Login getRegisteredLogin() {
-		return loginService.getLogin(SecurityContextHolder.getContext().getAuthentication().getName());
+		return accountService.getLogin(SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 	
 	public boolean hasRole(Role role) {

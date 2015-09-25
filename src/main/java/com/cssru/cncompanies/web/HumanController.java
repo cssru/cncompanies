@@ -34,7 +34,7 @@ import com.cssru.cncompanies.secure.BadLoginException;
 import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.service.UnitService;
 import com.cssru.cncompanies.synch.SynchContainer;
@@ -43,7 +43,7 @@ import com.cssru.cncompanies.synch.SynchStatus;
 @Controller
 public class HumanController {
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Autowired
 	private LoginChecker loginChecker;
@@ -118,14 +118,14 @@ public class HumanController {
 			return null;
 		}
 
-		Login existingLogin = loginService.getLogin(accountDto.getLogin());
+		Login existingLogin = accountService.getLogin(accountDto.getLogin());
 		if (existingLogin != null || accountDto.getLogin().equalsIgnoreCase("admin")) {
 			// login already exists
 			result.rejectValue("login","login.already_exists", "Указанный логин уже существует в системе");
 			return null;
 		}
 		
-		loginService.createLogin(accountDto, managedUnit);
+		accountService.createLogin(accountDto, managedUnit);
 
 		return "redirect:/human.list/"+managedUnit.getId();
 
@@ -191,7 +191,7 @@ public class HumanController {
 				model.addAttribute("error", "Доступ запрещен");
 				return "error_page";
 			}
-			loginToChange = loginService.getLogin(human);
+			loginToChange = accountService.getLogin(human);
 			if (loginToChange == null) {
 				model.addAttribute("error", "Аккаунт не существует");
 				return "error_page";
@@ -217,7 +217,7 @@ public class HumanController {
 
 		if (!ownerLogin.getLogin().equals(passwordProxy.getLoginName())) {
 			// change another user's password
-			loginToChange = loginService.getLogin(passwordProxy.getLoginName());
+			loginToChange = accountService.getLogin(passwordProxy.getLoginName());
 			if (loginToChange == null) {
 				return "redirect:/logout";
 			}
@@ -246,7 +246,7 @@ public class HumanController {
 		}
 
 		loginToChange.setPassword(passwordProxy.getNewPassword());
-		loginService.updateLogin(loginToChange, true); // изменяем пароль, сервис зашифрует его сам
+		accountService.updateLogin(loginToChange, true); // изменяем пароль, сервис зашифрует его сам
 
 		model.addAttribute("human", loginToChange.getHuman());
 		return "profile_form";
@@ -266,7 +266,7 @@ public class HumanController {
 		if (human == null) {
 			return "redirect:/logout";
 		}
-		Login humanLogin = loginService.getLogin(human);
+		Login humanLogin = accountService.getLogin(human);
 
 		Company company = human.getUnit().getCompany();
 		if (company != null) {
@@ -374,7 +374,7 @@ public class HumanController {
 		}
 
 		List<Login> list = null;
-		list = loginService.admListUser();
+		list = accountService.admListUser();
 
 		model.addAttribute("listUser", list);
 		return "admin/list_user";
@@ -385,7 +385,7 @@ public class HumanController {
 		if (!loginChecker.hasRole(Role.ADMIN)) {
 			return "redirect:/logout";
 		}
-		Login login = loginService.getLogin(userId);
+		Login login = accountService.getLogin(userId);
 		model.addAttribute("passwordProxy", new ChangePasswordDto(login));
 		return "admin/change_password_form";	
 	}
@@ -404,10 +404,10 @@ public class HumanController {
 			return "admin/change_password_form";	
 		}
 
-		Login login = loginService.getLogin(passwordProxy.getLoginName());
+		Login login = accountService.getLogin(passwordProxy.getLoginName());
 
 		login.setPassword(passwordProxy.getNewPassword());
-		loginService.updateLogin(login, true); // изменяем пароль, сервис зашифрует его сам
+		accountService.updateLogin(login, true); // изменяем пароль, сервис зашифрует его сам
 
 		return "redirect:/admin/user.list";
 	}
@@ -418,7 +418,7 @@ public class HumanController {
 			return "redirect:/logout";
 		}
 
-		Login login = loginService.getLogin(userId);
+		Login login = accountService.getLogin(userId);
 
 		if (login.getTarif().getTarif() == Tarif.TARIF_TESTING) {
 			model.addAttribute("login", login);
@@ -436,14 +436,14 @@ public class HumanController {
 			return "redirect:/logout";
 		}
 
-		Login login = loginService.getLogin(userId);
+		Login login = accountService.getLogin(userId);
 
 		if (login == null) {
 			model.addAttribute("error", "Логин не существует");
 			return "error_page";
 		}
 		
-		loginService.removeUser(login);
+		accountService.removeUser(login);
 		
 		return "redirect:/admin/user.list";
 	}
@@ -454,7 +454,7 @@ public class HumanController {
 			return "redirect:/logout";
 		}
 
-		Login login = loginService.getLogin(payProxy.getUserId());
+		Login login = accountService.getLogin(payProxy.getUserId());
 
 		if (login.getTarif().getTarif() == Tarif.TARIF_TESTING) {
 			model.addAttribute("login", login);
@@ -462,7 +462,7 @@ public class HumanController {
 		}
 
 		login.addPayment(payProxy.getPayValue());
-		loginService.updateLogin(login, false);
+		accountService.updateLogin(login, false);
 
 		return "redirect:/admin/user.list";
 	}
@@ -473,14 +473,14 @@ public class HumanController {
 			return "redirect:/logout";
 		}
 
-		Login userLogin = loginService.getLogin(userId);
+		Login userLogin = accountService.getLogin(userId);
 		if (userLogin == null) {
 			model.addAttribute("error", "Запрашиваемый аккаунт пользователя не существует");
 			return "error_page";
 		}
 
 		userLogin.setLocked(locked != 0);
-		loginService.updateLogin(userLogin, false);
+		accountService.updateLogin(userLogin, false);
 
 		return "redirect:/admin/user.list";
 	}
@@ -490,7 +490,7 @@ public class HumanController {
 		if (!loginChecker.hasRole(Role.ADMIN)) {
 			return "redirect:/logout";
 		}
-		Login login = loginService.getLogin(loginId);
+		Login login = accountService.getLogin(loginId);
 		Map<Integer, String> tarifs = new LinkedHashMap<Integer, String>();
 		List<Tarif> tarifList = Tarif.getPossibleTarifs();
 		if (login.getTarif().getTarif() != Tarif.TARIF_TESTING) {
@@ -517,14 +517,14 @@ public class HumanController {
 			return "redirect:/logout";
 		}
 
-		Login login = loginService.getLogin(loginId);
+		Login login = accountService.getLogin(loginId);
 		if (login == null || !Tarif.isTarifPossible(tarif) ||
 				(login.getTarif().getTarif() != Tarif.TARIF_TESTING && tarif.getTarif() == Tarif.TARIF_TESTING)) {
 			return "redirect:/logout";
 		}
 
 		login.setTarif(tarif);
-		loginService.updateLogin(login, false); // не изменяем пароль
+		accountService.updateLogin(login, false); // не изменяем пароль
 
 		return "redirect:/admin/user.list";
 	}
@@ -538,11 +538,11 @@ public class HumanController {
 			companyOwnerLogin = managerLogin;
 		} else
 			if (loginChecker.hasRole(Role.UNIT_MANAGER)) {
-				companyOwnerLogin = loginService.getLogin(managerLogin.getHuman().getUnit().getCompany().getOwner());
+				companyOwnerLogin = accountService.getLogin(managerLogin.getHuman().getUnit().getCompany().getOwner());
 			} else {
 				return false;
 			}
-		employeesCount = loginService.getEmployeesCount(companyOwnerLogin);
+		employeesCount = accountService.getEmployeesCount(companyOwnerLogin);
 		return employeesCount < companyOwnerLogin.getTarif().getMaximumEmployees();
 	}
 

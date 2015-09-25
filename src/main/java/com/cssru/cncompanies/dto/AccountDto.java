@@ -1,11 +1,12 @@
 package com.cssru.cncompanies.dto;
 
 import com.cssru.cncompanies.annotation.Email;
-import com.cssru.cncompanies.domain.Login;
+import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Unit;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class AccountDto {
 
@@ -41,21 +42,21 @@ public class AccountDto {
 	private String lastName;
 
 	private String note;
-	private Integer birthday;
+	private Date birthday;
 	private Long unitId;
 
 	public AccountDto() {
 	}
 
-	public AccountDto(Login humanLogin) {
-		this.id = humanLogin.getHuman().getId();
-		this.login = humanLogin.getLogin();
-		this.surname = humanLogin.getHuman().getSurname();
-		this.name = humanLogin.getHuman().getName();
-		this.lastName = humanLogin.getHuman().getLastName();
-		this.note = humanLogin.getHuman().getNote();
-		this.birthday = humanLogin.getHuman().getBirthday();
-		Unit unit = humanLogin.getHuman().getUnit();
+	public AccountDto(Account account) {
+		this.id = account.getHuman().getId();
+		this.login = account.getLogin();
+		this.surname = account.getHuman().getSurname();
+		this.name = account.getHuman().getName();
+		this.lastName = account.getHuman().getLastName();
+		this.note = account.getHuman().getNote();
+		this.birthday = account.getHuman().getBirthday();
+		Unit unit = account.getHuman().getUnit();
 		if (unit == null) {
 			this.unitId = 0L;
 		} else {
@@ -99,7 +100,7 @@ public class AccountDto {
 		return note;
 	}
 
-	public Integer getBirthday() {
+	public Date getBirthday() {
 		return birthday;
 	}
 
@@ -143,7 +144,7 @@ public class AccountDto {
 		this.note = note;
 	}
 
-	public void setBirthday(Integer birthday) {
+	public void setBirthday(Date birthday) {
 		this.birthday = birthday;
 	}
 

@@ -8,12 +8,12 @@ import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Role;
 import com.cssru.cncompanies.secure.BadLoginException;
 import com.cssru.cncompanies.secure.LoginChecker;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 
 @Controller
 public class HomeController {
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Autowired
 	private LoginChecker loginChecker;
@@ -41,7 +41,7 @@ public class HomeController {
 		}
 		if (login != null) {
 			model.addAttribute("login", login);
-			model.addAttribute("employeesCount", loginService.getEmployeesCount(login));
+			model.addAttribute("employeesCount", accountService.getEmployeesCount(login));
 		}
 		return "index";
 	}

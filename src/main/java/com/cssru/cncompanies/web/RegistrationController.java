@@ -3,7 +3,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -15,11 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.dto.AccountDto;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 
 @Controller
 public class RegistrationController {
@@ -31,7 +29,7 @@ public class RegistrationController {
 	HumanService humanService;
 
 	@Autowired
-	LoginService loginService;
+	AccountService accountService;
 
 	@Autowired
 	MailSender mailSender;
@@ -49,14 +47,14 @@ public class RegistrationController {
 			return null;
 		}
 		
-		Login existingLogin = loginService.getLogin(accountDto.getLogin());
+		Login existingLogin = accountService.getLogin(accountDto.getLogin());
 		if (existingLogin != null || accountDto.getLogin().equalsIgnoreCase("admin")) {
 			// login already exists
 			result.rejectValue("login","already_exists");
 			return null;
 		}
 
-		Login newLogin = loginService.createLogin(accountDto);
+		Login newLogin = accountService.createLogin(accountDto);
 		newLogin.setConfirmCode(generateConfirmCode());
 
 		//send confirm code to email "newLogin.getEmail()"
@@ -85,10 +83,10 @@ public class RegistrationController {
 			return "redirect:/logout";
 		}
 
-		Login login = loginService.getLogin(loginId);
+		Login login = accountService.getLogin(loginId);
 		if (!login.isConfirmed() && confirmCode.equals(login.getConfirmCode())) {
 			login.setConfirmCode(null);
-			loginService.updateLogin(login, false);
+			accountService.updateLogin(login, false);
 			model.addAttribute("login", login);
 			model.addAttribute("confirmed", true);
 		}
@@ -104,7 +102,7 @@ public class RegistrationController {
 	@RequestMapping(value="/password_recovery", method=RequestMethod.POST)
 	public String generateNewPassword(@ModelAttribute("login") Login login, BindingResult result, Model model){
 
-		Login existingLogin = loginService.getLogin(login.getLogin());
+		Login existingLogin = accountService.getLogin(login.getLogin());
 		if (existingLogin == null || 
 				!existingLogin.getEmail().equals(login.getEmail()) ||
 				!existingLogin.getHuman().getSurname().equals(login.getHuman().getSurname()) ||
@@ -126,7 +124,7 @@ public class RegistrationController {
 			mailSender.send(msg);
 			model.addAttribute("login", login);
 			existingLogin.setPassword(newPassword);
-			loginService.updateLogin(existingLogin, true);
+			accountService.updateLogin(existingLogin, true);
 		}
 		catch (MailException ex) {
 			ex.printStackTrace();

@@ -16,7 +16,7 @@ import com.cssru.cncompanies.secure.BadLoginException;
 import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 
 @Controller
 public class CompanyController {
@@ -25,7 +25,7 @@ public class CompanyController {
 	private CompanyService companyService;
 
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Autowired
 	private LoginChecker loginChecker;

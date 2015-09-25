@@ -2,7 +2,6 @@ package com.cssru.cncompanies.service.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,9 @@ import com.cssru.cncompanies.dao.TaskDAO;
 import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Task;
-import com.cssru.cncompanies.domain.TaskMetadataElement;
 import com.cssru.cncompanies.proxy.TaskJsonProxy;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.synch.ItemDescriptor;
 import com.cssru.cncompanies.synch.SynchContainer;
@@ -28,7 +26,7 @@ public class TaskServiceImpl implements TaskService {
 	private HumanService humanService;
 
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Autowired
 	private TaskDAO taskDAO;
@@ -246,7 +244,7 @@ public class TaskServiceImpl implements TaskService {
 		long lastSynchTime = System.currentTimeMillis();
 		response.setLastSynchTime(lastSynchTime);
 		managerLogin.setLastSynch(new Date(lastSynchTime));
-		loginService.updateLogin(managerLogin, false);
+		accountService.updateLogin(managerLogin, false);
 		return response;
 	}
 

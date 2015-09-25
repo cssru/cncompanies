@@ -8,7 +8,7 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.service.UnitService;
 
@@ -23,8 +23,8 @@ public class TestConfig {
 	}
 	
 	@Bean
-	public LoginService loginService() {
-		return Mockito.mock(LoginService.class);
+	public AccountService loginService() {
+		return Mockito.mock(AccountService.class);
 	}
 
 	@Bean

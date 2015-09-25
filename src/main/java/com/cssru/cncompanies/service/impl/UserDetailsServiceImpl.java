@@ -7,7 +7,7 @@ import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.secure.HumanGrantedAuthority;
 import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.LoginService;
+import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,7 +25,7 @@ import java.util.Set;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private LoginService loginService;
+	private AccountService accountService;
 
 	@Autowired
 	private UnitService unitService;
@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String loginName) throws UsernameNotFoundException {
-		Login login = loginService.getLogin(loginName);
+		Login login = accountService.getLogin(loginName);
 		if (login == null) throw new UsernameNotFoundException("Пользователь "+loginName+" не найден");
 		Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
 
