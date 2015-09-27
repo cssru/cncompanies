@@ -18,13 +18,13 @@ public class Account {
 	@OneToOne(cascade = CascadeType.ALL)
 	private Human human;
 	
-	@Column (unique = true, length = 30)
+	@Column (nullable = false, unique = true, length = 50)
 	private String login;
 
-	@Column (length = 255)
+	@Column (nullable = false, length = 255)
 	private String password;
 
-	@Column (length = 50)
+	@Column (nullable = false, unique = true, length = 50)
 	private String email;
 
 	@Column (nullable = false)
@@ -33,7 +33,7 @@ public class Account {
 	@Column (nullable = false)
 	private Boolean enabled;
 
-	@Column
+	@Column (nullable = false)
 	private Date created;
 
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
@@ -42,21 +42,12 @@ public class Account {
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private Set<Role> roles;
 
-	@Column
+	@Column (nullable = false)
 	private Integer money;
 
-	@Column
+	@Column (nullable = false)
 	private Long version;
 
-	public Account() {
-		locked = false;
-	}
-	
-	public Account(Human human) {
-		this();
-		this.human = human;
-	}
-	
 	public String getLogin() {
 		return login;
 	}
@@ -152,4 +143,20 @@ public class Account {
 	public void setMoney(Integer money) {
 		this.money = money;
 	}
+
+    @PrePersist
+    private void initMoney() {
+        setMoney(0);
+        setCreated(new Date());
+        setVersion(0L);
+        setLocked(false);
+        if (enabled == null) {
+            setEnabled(false);
+        }
+    }
+
+    @PreUpdate
+    private void setNextVersion() {
+        setVersion(getVersion() + 1L);
+    }
 }
