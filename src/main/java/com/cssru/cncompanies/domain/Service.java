@@ -1,7 +1,12 @@
 package com.cssru.cncompanies.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table (name = "services")
 public class Service {
@@ -10,44 +15,19 @@ public class Service {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column (nullable = false, length = 100)
     private String name;
 
-    @Column
+    @Column (nullable = true, length = 4096)
     private String description;
 
-    @Column
+    @Column (nullable = false)
     private Integer costPerDay;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Integer getCostPerDay() {
-        return costPerDay;
-    }
-
-    public void setCostPerDay(Integer costPerDay) {
-        this.costPerDay = costPerDay;
+    @PrePersist
+    private void initNewEntity() {
+        if (costPerDay == null) {
+            costPerDay = 0;
+        }
     }
 }
