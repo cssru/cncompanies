@@ -1,7 +1,12 @@
 package com.cssru.cncompanies.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "roles")
 public class Role {
@@ -10,35 +15,11 @@ public class Role {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column (nullable = false)
     private Account account;
 
-    @Column
+    @Column (nullable = false)
     @Enumerated (EnumType.ORDINAL)
     private Role role;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
 }
