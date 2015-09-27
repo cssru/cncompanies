@@ -15,7 +15,8 @@ public class Role {
     @GeneratedValue
     private Long id;
 
-    @Column (nullable = false)
+    @ManyToOne
+    @JoinColumn (nullable = false)
     private Account account;
 
     @Column (nullable = false)

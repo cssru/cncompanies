@@ -29,7 +29,8 @@ public class ProvidedService {
     @JoinColumn (nullable = false)
     private Service service;
 
-    @Column (nullable = false)
+    @ManyToOne
+    @JoinColumn (nullable = false)
     private Account account;
 
 }

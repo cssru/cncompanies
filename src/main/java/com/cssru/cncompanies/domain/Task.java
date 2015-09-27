@@ -49,7 +49,7 @@ public class Task {
 	@Column
 	private Task parent;
 	
-	@Column (name="alert_time")
+	@Column (name="alert_time", nullable = false)
 	private Long alertTime;
 	
 	@Column (nullable = false)
@@ -71,5 +71,19 @@ public class Task {
 		Task task2 = (Task)o;
 		return id.equals(task2.getId());
 	}
+
+    @PrePersist
+    private void initNewEntity() {
+        setArchive(false);
+        setCreated(new Date());
+        setDifficulty(0);
+        setVersion(0L);
+        setAlertTime(0L);
+    }
+
+    @PreUpdate
+    private void setNextVersion() {
+        setVersion(getVersion() + 1L);
+    }
 
 }

@@ -19,23 +19,36 @@ public class Unit {
 	private Long id;
 	
 	@ManyToOne
-	@JoinColumn
+	@JoinColumn (nullable = false)
 	private Company company;
 	
 	@ManyToOne
 	@JoinColumn
 	private Human manager;
 	
-	@Column
+	@Column (nullable = false, length = 100)
 	private String name;
 
-	@Column
+	@Column (length = 4096)
 	private String description;
 	
 	@Column
 	private Unit parent;
-	
+
+    @Column (nullable = false)
+    private Long version;
+
 	@OneToMany (mappedBy = "unit")
 	private Set<Human> humans;
+
+    @PrePersist
+    private void initNewEntity() {
+        setVersion(0L);
+    }
+
+    @PreUpdate
+    private void setNextVersion() {
+        setVersion(getVersion() + 1L);
+    }
 
 }

@@ -39,7 +39,7 @@ public class Account {
 	@Column (nullable = false)
 	private Date created;
 
-	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ProvidedService> providedServices;
 
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)

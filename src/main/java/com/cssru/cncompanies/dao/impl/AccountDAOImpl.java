@@ -1,15 +1,14 @@
 package com.cssru.cncompanies.dao.impl;
 
-import java.util.Date;
-import java.util.List;
-
+import com.cssru.cncompanies.dao.AccountDAO;
 import com.cssru.cncompanies.domain.Account;
+import com.cssru.cncompanies.domain.Human;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cssru.cncompanies.dao.AccountDAO;
-import com.cssru.cncompanies.domain.Human;
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public class AccountDAOImpl implements AccountDAO {
@@ -18,23 +17,10 @@ public class AccountDAOImpl implements AccountDAO {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void add(Account account) {
+	public void create(Account account) {
 		sessionFactory
 				.getCurrentSession()
 				.save(account);
-	}
-
-	@Override
-	public void delete(Long id) {
-		Account persistentAccount = (Account) sessionFactory.getCurrentSession().load(Account.class, id);
-		if (persistentAccount != null) {
-			sessionFactory.getCurrentSession().delete(persistentAccount);
-		}
-	}
-
-	@Override
-	public void update(Account account) {
-		sessionFactory.getCurrentSession().merge(account);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -60,9 +46,22 @@ public class AccountDAOImpl implements AccountDAO {
 	@Override
 	public Account get(Human human) {
 		return (Account)sessionFactory.getCurrentSession()
-                .createQuery("from Account where human = :human")
-                .setParameter("human", human)
-                .uniqueResult();
+				.createQuery("from Account where human = :human")
+				.setParameter("human", human)
+				.uniqueResult();
+	}
+
+	@Override
+	public void delete(Long id) {
+		Account persistentAccount = (Account) sessionFactory.getCurrentSession().load(Account.class, id);
+		if (persistentAccount != null) {
+			sessionFactory.getCurrentSession().delete(persistentAccount);
+		}
+	}
+
+	@Override
+	public void update(Account account) {
+		sessionFactory.getCurrentSession().merge(account);
 	}
 
 	@SuppressWarnings("unchecked")
