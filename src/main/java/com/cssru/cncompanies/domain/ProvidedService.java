@@ -1,8 +1,13 @@
 package com.cssru.cncompanies.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table (name = "provided_services")
 public class ProvidedService {
@@ -11,67 +16,20 @@ public class ProvidedService {
     @GeneratedValue
     private Long id;
 
-    @Column
+    @Column (nullable = false)
     private Date begin;
 
-    @Column
+    @Column (nullable = false)
     private Date end;
 
-    @Column (name = "paid_money")
+    @Column (name = "paid_money", nullable = false)
     private Integer paidMoney;
 
     @ManyToOne
-    @JoinColumn (name = "id")
+    @JoinColumn (nullable = false)
     private Service service;
 
-    @Column
+    @Column (nullable = false)
     private Account account;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Date getBegin() {
-        return begin;
-    }
-
-    public void setBegin(Date begin) {
-        this.begin = begin;
-    }
-
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public Integer getPaidMoney() {
-        return paidMoney;
-    }
-
-    public void setPaidMoney(Integer paidMoney) {
-        this.paidMoney = paidMoney;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
-    }
 }
