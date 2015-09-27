@@ -53,7 +53,7 @@ public class Account {
 	private Long version;
 
     @PrePersist
-    private void initMoney() {
+    private void initNewEntity() {
         setMoney(0);
         setCreated(new Date());
         setVersion(0L);

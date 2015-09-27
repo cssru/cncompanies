@@ -1,15 +1,14 @@
 package com.cssru.cncompanies.domain;
 
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+@Getter
+@Setter
 @Entity
 @Table (name="humans")
 public class Human {
@@ -34,89 +33,15 @@ public class Human {
 	@Column
 	private Date birthday;
 
-	@Column (name="last_modified")
-	private Date lastModified;
+	@Column (nullable = false)
+	private Long version;
 
-	@OneToMany (mappedBy = "human", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany (mappedBy = "human", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<HumanMetadataElement> metadata;
 
-	@ManyToOne (fetch = FetchType.EAGER)
+	@ManyToOne
 	@JoinColumn
 	private Unit unit;
-
-	@JsonIgnore
-	public Long getId() {
-		return id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getSurname() {
-		return surname;
-	}
-
-	public String getLastName() {
-		return lastname;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public Date getBirthday() {
-		return birthday;
-	}
-
-	public Date getLastModified() {
-		return lastModified;
-	}
-
-	public List<HumanMetadataElement> getMetadata() {
-		return metadata;
-	}
-
-	public Unit getUnit() {
-		return unit;
-	}
-
-	//setters
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setSurname(String surname) {
-		this.surname = surname;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public void setLastName(String lastName) {
-		this.lastname = lastName;
-	}
-
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-	public void setBirthday(Date birthday) {
-		this.birthday = birthday;
-	}
-
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
-
-	public void setMetadata(List<HumanMetadataElement> metadata) {
-		this.metadata = metadata;
-	}
-
-	public void setUnit(Unit unit) {
-		this.unit = unit;
-	}
 
 	@Override
 	public boolean equals(Object o) {
@@ -124,5 +49,15 @@ public class Human {
 		Human human2 = (Human)o;
 		return id.equals(human2.getId());
 	}
-	
+
+    @PrePersist
+    private void initNewEntity() {
+        setVersion(0L);
+    }
+
+    @PreUpdate
+    private void setNextVersion() {
+        setVersion(getVersion() + 1L);
+    }
+
 }
