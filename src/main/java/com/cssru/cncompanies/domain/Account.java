@@ -1,13 +1,11 @@
 package com.cssru.cncompanies.domain;
 
-import java.util.Date;
-import java.util.Set;
-
-import javax.persistence.*;
-
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Type;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,7 +17,8 @@ public class Account {
 	@GeneratedValue
 	private Long id;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(nullable = false)
 	private Human human;
 	
 	@Column (nullable = false, unique = true, length = 50)

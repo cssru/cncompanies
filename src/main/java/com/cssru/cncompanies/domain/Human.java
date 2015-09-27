@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -37,7 +37,7 @@ public class Human {
 	private Long version;
 
 	@OneToMany (mappedBy = "human", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<HumanMetadataElement> metadata;
+	private Set<HumanMetadataElement> metadata;
 
 	@ManyToOne
 	@JoinColumn
