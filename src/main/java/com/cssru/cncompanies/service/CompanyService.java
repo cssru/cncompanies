@@ -1,15 +1,15 @@
 package com.cssru.cncompanies.service;
 
 import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Login;
+import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 
 import java.util.List;
 
 public interface CompanyService {
-	void addCompany(Company company, Login managerLogin);
-	List<Company> listCompany(Login managerLogin);
-	void removeCompany(Long id, Login managerLogin) throws AccessDeniedException;
-	void updateCompany(Company company, Login managerLogin) throws AccessDeniedException;
-	Company getCompany(Long id, Login managerLogin) throws AccessDeniedException;
+	void add(Company company) throws AccessDeniedException;
+	List<Company> list(Human owner) throws AccessDeniedException;
+	void delete(Long id) throws AccessDeniedException;
+	void update(Company company) throws AccessDeniedException;
+	Company get(Long id) throws AccessDeniedException;
 }
