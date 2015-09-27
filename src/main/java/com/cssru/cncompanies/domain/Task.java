@@ -1,18 +1,11 @@
 package com.cssru.cncompanies.domain;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.*;
-
-import com.cssru.cncompanies.proxy.TaskJsonProxy;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -62,7 +55,8 @@ public class Task {
 	@Column (nullable = false)
 	private Boolean archive;
 	
-	@Column
+	@ManyToOne
+    @JoinColumn
 	private Project project;
 	
 	@Column (nullable = false)
