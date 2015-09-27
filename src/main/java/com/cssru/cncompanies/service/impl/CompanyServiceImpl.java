@@ -2,13 +2,18 @@ package com.cssru.cncompanies.service.impl;
 
 import java.util.List;
 
+import com.cssru.cncompanies.dao.AccountDAO;
+import com.cssru.cncompanies.domain.Account;
+import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.secure.Role;
+import com.cssru.cncompanies.service.AccountService;
+import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cssru.cncompanies.dao.CompanyDAO;
 import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.CompanyService;
@@ -23,17 +28,35 @@ public class CompanyServiceImpl implements CompanyService {
 	@Autowired
 	private UnitService unitService;
 
+	@Autowired
+	private AccountDAO accountDao;
+
 	@Transactional
 	@Override
-	public void addCompany(Company company, Login managerLogin) {
-		company.setOwner(managerLogin.getHuman());
-		companyDAO.addCompany(company);
+	public void add(Company company) throws AccessDeniedException {
+
+		if (!Utils.clientHasRole(Role.ACCOUNT_HOLDER)) {
+			throw new AccessDeniedException();
+		}
+
+		Account clientAccount = Utils.clientAccount(accountDao);
+		if (clientAccount == null) {
+			throw new AccessDeniedException();
+		}
+
+		company.setOwner(clientAccount.getHuman());
+		companyDAO.save(company);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
-	public List<Company> listCompany(Login managerLogin) {
-		return companyDAO.listCompany(managerLogin.getHuman());
+	public List<Company> list(Long ownerId) throws AccessDeniedException {
+
+		if (!Utils.clientHasAnyRole(new Role[]{Role.ACCOUNT_HOLDER, Role.COMPANY_MANAGER})) {
+			throw new AccessDeniedException();
+		}
+
+		return companyDAO.list(owner);
 	}
 
 	@Transactional

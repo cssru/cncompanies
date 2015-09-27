@@ -43,6 +43,9 @@ public class Human {
 	@JoinColumn
 	private Unit unit;
 
+	@OneToMany (mappedBy = "owner")
+	private Set<Company> ownedCompanies;
+
 	@Override
 	public boolean equals(Object o) {
 		if (o == null || !(o instanceof Human)) return false;

@@ -1,16 +1,13 @@
 package com.cssru.cncompanies.dao.impl;
 
-import java.util.List;
-
-import org.hibernate.Query;
+import com.cssru.cncompanies.dao.CompanyDAO;
+import com.cssru.cncompanies.domain.Company;
+import com.cssru.cncompanies.domain.Human;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cssru.cncompanies.dao.CompanyDAO;
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Human;
-import com.cssru.cncompanies.domain.Login;
+import java.util.List;
 
 
 @Repository
@@ -20,7 +17,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void add(Company company) {
+	public void save(Company company) {
 		sessionFactory.getCurrentSession().save(company);		
 	}
 
@@ -41,7 +38,7 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	@Override
 	public void update(Company company) {
-		sessionFactory.getCurrentSession().merge(company);
+		sessionFactory.getCurrentSession().update(company);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CompanyService {
 	void add(Company company) throws AccessDeniedException;
-	List<Company> list(Human owner) throws AccessDeniedException;
+	List<Company> list(Long ownerId) throws AccessDeniedException;
 	void delete(Long id) throws AccessDeniedException;
 	void update(Company company) throws AccessDeniedException;
 	Company get(Long id) throws AccessDeniedException;

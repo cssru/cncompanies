@@ -1,13 +1,12 @@
 package com.cssru.cncompanies.dao;
 
-import java.util.List;
-
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
-import com.cssru.cncompanies.domain.Login;
+
+import java.util.List;
 
 public interface CompanyDAO {
-	void add(Company company);
+	void save(Company company);
 	List<Company> list(Human owner);
 	void delete(Company company);
 	void update(Company company);
