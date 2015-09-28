@@ -1,11 +1,12 @@
 package com.cssru.cncompanies.dto;
 
 import com.cssru.cncompanies.domain.Task;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
 
-public class TaskDto {
+public class TaskDto extends Dto {
 	private Long id;
 	private Long expiresMillis; // UTC
 	private Long alertTime;

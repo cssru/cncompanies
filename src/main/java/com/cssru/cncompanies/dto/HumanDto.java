@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-public class HumanDto {
+public class HumanDto extends Dto {
 
 	private Long id;
 	private String surname;

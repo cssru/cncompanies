@@ -1,17 +1,14 @@
 package com.cssru.cncompanies.dto;
 
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.secure.Role;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
 
 @Getter
 @Setter
-public class AccountDto {
+public class AccountDto extends Dto {
 	private Long id;
 	private HumanDto human;
 	private String login;

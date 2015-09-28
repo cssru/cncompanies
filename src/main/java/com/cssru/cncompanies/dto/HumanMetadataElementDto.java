@@ -1,14 +1,11 @@
 package com.cssru.cncompanies.dto;
 
-import com.cssru.cncompanies.domain.Human;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-
 @Getter
 @Setter
-public class HumanMetadataElementDto {
+public class HumanMetadataElementDto extends Dto {
 	
 	private Long id;
 	

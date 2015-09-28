@@ -12,7 +12,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class AccountRegisterDto {
+public class AccountRegisterDto extends Dto {
 
 	private Long id;
 
