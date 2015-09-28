@@ -43,8 +43,11 @@ public class Human {
 	@JoinColumn
 	private Unit unit;
 
-	@OneToMany (mappedBy = "owner")
-	private Set<Company> ownedCompanies;
+	@OneToMany (mappedBy = "manager")
+	private Set<Company> managedCompanies;
+
+	@OneToMany (mappedBy = "manager")
+	private Set<Unit> managedUnits;
 
 	@Override
 	public boolean equals(Object o) {

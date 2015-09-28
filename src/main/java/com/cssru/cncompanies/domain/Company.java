@@ -22,8 +22,12 @@ public class Company {
 	
 	@ManyToOne
 	@JoinColumn (nullable = false)
-	private Human owner;
-	
+	private Human manager;
+
+	@ManyToOne
+	@JoinColumn (nullable = false)
+	private Account holder;
+
 	@Column (length = 2048)
 	private String description;
 

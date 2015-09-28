@@ -45,6 +45,9 @@ public class Account {
 	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
 	private Set<Role> roles;
 
+	@OneToMany(mappedBy = "holder", cascade = CascadeType.ALL)
+	private Set<Company> companies;
+
 	@Column (nullable = false)
 	private Integer money;
 
