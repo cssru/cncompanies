@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.cssru.cncompanies.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cssru.cncompanies.dao.HumanDAO;
 import com.cssru.cncompanies.dao.AccountDAO;
 import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.dto.AccountDto;
+import com.cssru.cncompanies.dto.AccountRegisterDto;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
@@ -42,13 +41,13 @@ public class AccountServiceImpl implements AccountService {
 
 	@Transactional
 	@Override
-	public Account create(AccountDto accountDto) {
+	public Account create(AccountRegisterDto accountDto) {
 		return create(accountDto, null);
 	}
 
 	@Transactional
 	@Override
-	public Account create(AccountDto accountDto, Unit unit) {
+	public Account create(AccountRegisterDto accountDto, Unit unit) {
 		Account account = new Account();
 		account.setLogin(accountDto.getLogin());
 		account.setPassword(passwordEncoder.encode(accountDto.getPassword()));

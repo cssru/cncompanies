@@ -5,8 +5,10 @@ import java.util.List;
 import com.cssru.cncompanies.dao.AccountDAO;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.dto.CompanyDto;
 import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.service.AccountService;
+import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,12 +30,15 @@ public class CompanyServiceImpl implements CompanyService {
 	@Autowired
 	private UnitService unitService;
 
+    @Autowired
+    private HumanService humanService;
+
 	@Autowired
 	private AccountDAO accountDao;
 
 	@Transactional
 	@Override
-	public void add(Company company) throws AccessDeniedException {
+	public void add(CompanyDto companyDto) throws AccessDeniedException {
 
 		if (!Utils.clientHasRole(Role.ACCOUNT_HOLDER)) {
 			throw new AccessDeniedException();
@@ -44,22 +49,60 @@ public class CompanyServiceImpl implements CompanyService {
 			throw new AccessDeniedException();
 		}
 
-		company.setOwner(clientAccount.getHuman());
+        Company company = new Company();
+        company.setName(companyDto.getName());
+        company.setDescription(companyDto.getDescription());
+
+        if (companyDto.getManagerId() == null) {
+            company.setManager(clientAccount.getHuman()); // default manager is account holder
+        } else {
+            Human manager = humanService.getHuman(companyDto.getManagerId());
+
+        }
+
+        company.setHolder(clientAccount);
 		companyDAO.save(company);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
-	public List<Company> list(Long ownerId) throws AccessDeniedException {
+	public List<CompanyDto> list(Account holder) throws AccessDeniedException {
 
-		if (!Utils.clientHasAnyRole(new Role[]{Role.ACCOUNT_HOLDER, Role.COMPANY_MANAGER})) {
+		if (!Utils.clientHasRole(Role.ACCOUNT_HOLDER)) {
 			throw new AccessDeniedException();
 		}
 
-		return companyDAO.list(owner);
+        Account clientAccount = Utils.clientAccount(accountDao);
+        // holder's account may be deleted by admin during working process
+        if (clientAccount == null ||
+                // account holder can list only his own companies
+                !clientAccount.equals(holder)) {
+            throw new AccessDeniedException();
+        }
+
+        return companyDAO.listByHolder(holder);
 	}
 
-	@Transactional
+    @Transactional (readOnly = true)
+    @Override
+    public List<Company> list(Human manager) throws AccessDeniedException {
+
+        if (!Utils.clientHasAnyRole(new Role[] {Role.ACCOUNT_HOLDER, Role.COMPANY_MANAGER})) {
+            throw new AccessDeniedException();
+        }
+
+        Account clientAccount = Utils.clientAccount(accountDao);
+        // holder's account may be deleted by admin during working process
+        if (clientAccount == null ||
+                // account holder can list only his own companies
+                !clientAccount.equals(holder)) {
+            throw new AccessDeniedException();
+        }
+
+        return companyDAO.listByHolder(holder);
+    }
+
+    @Transactional
 	@Override
 	public void removeCompany(Long id, Login managerLogin) throws AccessDeniedException {
 		Company company = companyDAO.getCompany(id);

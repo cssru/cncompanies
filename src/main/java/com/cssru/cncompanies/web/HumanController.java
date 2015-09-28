@@ -26,7 +26,7 @@ import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.domain.Unit;
-import com.cssru.cncompanies.dto.AccountDto;
+import com.cssru.cncompanies.dto.AccountRegisterDto;
 import com.cssru.cncompanies.dto.ChangePasswordDto;
 import com.cssru.cncompanies.proxy.HumanWrapper;
 import com.cssru.cncompanies.proxy.PayProxy;
@@ -88,13 +88,13 @@ public class HumanController {
 		}
 
 		model.addAttribute("unit", managedUnit);
-		model.addAttribute("accountDto", new AccountDto());
+		model.addAttribute("accountDto", new AccountRegisterDto());
 		return "human.add";
 	}
 
 	// данные нового сотрудника введены в форму, получаем ее
 	@RequestMapping(value = "/human.add/{unitId}", method = RequestMethod.POST)
-	public String addHuman(@PathVariable("unitId") Long unitId, @ModelAttribute @Valid AccountDto accountDto, BindingResult result, Model model) {
+	public String addHuman(@PathVariable("unitId") Long unitId, @ModelAttribute @Valid AccountRegisterDto accountDto, BindingResult result, Model model) {
 		
 		if (result.hasErrors()) {
 			return null;
@@ -279,12 +279,12 @@ public class HumanController {
 				model.addAttribute("unitsList", units);
 			}
 		}
-		model.addAttribute("humanProxy", new AccountDto(humanLogin));
+		model.addAttribute("humanProxy", new AccountRegisterDto(humanLogin));
 		return "edit_human_form";
 	}
 
 	@RequestMapping(value = "/human.edit", method = RequestMethod.POST)
-	public String updateHuman(@ModelAttribute("humanProxy") AccountDto humanProxy, BindingResult result, 
+	public String updateHuman(@ModelAttribute("humanProxy") AccountRegisterDto humanProxy, BindingResult result,
 			Model model) {
 
 		Login managerLogin = loginChecker.getRegisteredLogin();

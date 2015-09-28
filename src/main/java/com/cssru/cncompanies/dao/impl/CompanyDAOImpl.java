@@ -1,6 +1,7 @@
 package com.cssru.cncompanies.dao.impl;
 
 import com.cssru.cncompanies.dao.CompanyDAO;
+import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
 import org.hibernate.SessionFactory;
@@ -23,11 +24,21 @@ public class CompanyDAOImpl implements CompanyDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Company> list(Human owner) {
+	public List<Company> listByManager(Human manager) {
 		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Company where owner = :owner")
-				.setParameter("owner", owner)
+				.createQuery("from Company where manager = :manager")
+				.setParameter("manager", manager)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Company> listByHolder(Account holder) {
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery("from Company where holder = :holder")
+				.setParameter("holder", holder)
 				.list();
 	}
 

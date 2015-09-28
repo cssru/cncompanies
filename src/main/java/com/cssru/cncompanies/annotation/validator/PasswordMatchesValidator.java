@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import com.cssru.cncompanies.annotation.PasswordMatches;
-import com.cssru.cncompanies.dto.AccountDto;
+import com.cssru.cncompanies.dto.AccountRegisterDto;
 
 public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, Object> {
 
@@ -14,7 +14,7 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
 
 	@Override
 	public boolean isValid(Object accountObject, ConstraintValidatorContext context) {
-		AccountDto accountDto = (AccountDto)accountObject;
+		AccountRegisterDto accountDto = (AccountRegisterDto)accountObject;
 		return accountDto.getPassword().equals(accountDto.getPasswordConfirm());
 	}
 

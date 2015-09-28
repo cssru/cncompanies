@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.dto.AccountDto;
+import com.cssru.cncompanies.dto.AccountRegisterDto;
 import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.service.AccountService;
 
@@ -35,13 +35,13 @@ public class RegistrationController {
 	MailSender mailSender;
 
 	@RequestMapping(value="/registration", method=RequestMethod.GET)
-	public AccountDto startRegistration(){
-		AccountDto accountDto = new AccountDto();
+	public AccountRegisterDto startRegistration(){
+		AccountRegisterDto accountDto = new AccountRegisterDto();
 		return accountDto;
 	}
 
 	@RequestMapping(value="/registration", method=RequestMethod.POST)
-	public String register(@ModelAttribute @Valid AccountDto accountDto, BindingResult result, Model model){
+	public String register(@ModelAttribute @Valid AccountRegisterDto accountDto, BindingResult result, Model model){
 
 		if (result.hasErrors()) {
 			return null;
