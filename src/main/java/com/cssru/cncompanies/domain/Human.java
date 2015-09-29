@@ -5,7 +5,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,17 +37,17 @@ public class Human {
 	private Long version;
 
 	@OneToMany (mappedBy = "human", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<HumanMetadataElement> metadata;
+	private List<HumanMetadataElement> metadata;
 
 	@ManyToOne
-	@JoinColumn
+	@JoinColumn (nullable = false)
 	private Unit unit;
 
 	@OneToMany (mappedBy = "manager")
-	private Set<Company> managedCompanies;
+	private List<Company> managedCompanies;
 
 	@OneToMany (mappedBy = "manager")
-	private Set<Unit> managedUnits;
+	private List<Unit> managedUnits;
 
 	@Override
 	public boolean equals(Object o) {

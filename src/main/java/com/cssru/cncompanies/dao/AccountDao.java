@@ -6,7 +6,7 @@ import com.cssru.cncompanies.domain.Human;
 import java.util.Date;
 import java.util.List;
 
-public interface AccountDAO {
+public interface AccountDao {
 	void create(Account account);
 	Account get(String login);
 	Account get(Long id);

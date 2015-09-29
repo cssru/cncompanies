@@ -6,7 +6,7 @@ import com.cssru.cncompanies.domain.Unit;
 
 import java.util.List;
 
-public interface UnitDAO {
+public interface UnitDao {
 	void add(Unit unit);
 	List<Unit> list(Company company);
 	List<Unit> list(Human unitManager);

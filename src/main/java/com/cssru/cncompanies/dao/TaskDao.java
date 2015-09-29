@@ -6,7 +6,7 @@ import com.cssru.cncompanies.domain.Task;
 
 import java.util.List;
 
-public interface TaskDAO {
+public interface TaskDao {
 	void add(Task task);
 	void update(Task task);
 	void delete(Long id);

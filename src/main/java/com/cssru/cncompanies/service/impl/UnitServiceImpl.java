@@ -1,6 +1,6 @@
 package com.cssru.cncompanies.service.impl;
 
-import com.cssru.cncompanies.dao.UnitDAO;
+import com.cssru.cncompanies.dao.UnitDao;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
@@ -19,7 +19,7 @@ import java.util.List;
 public class UnitServiceImpl implements UnitService {
 
 	@Autowired
-	private UnitDAO unitDAO;
+	private UnitDao unitDao;
 
 	@Autowired
 	private HumanService humanService;
@@ -35,7 +35,7 @@ public class UnitServiceImpl implements UnitService {
 			throw new AccessDeniedException();
 		}
 		unit.setCompany(existingCompany);
-		unitDAO.addUnit(unit);
+		unitDao.addUnit(unit);
 	}
 
 	@Transactional (readOnly = true)
@@ -45,13 +45,13 @@ public class UnitServiceImpl implements UnitService {
 		if (existingCompany == null) {
 			throw new AccessDeniedException();
 		}
-		return unitDAO.listUnit(existingCompany);
+		return unitDao.listUnit(existingCompany);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Unit> listUnitsWithOwner(Human unitOwner, Login managerLogin) throws AccessDeniedException {
-		List<Unit> units = unitDAO.listUnitsWithOwner(unitOwner);
+		List<Unit> units = unitDao.listUnitsWithOwner(unitOwner);
 		if (!units.isEmpty()) {
 			Unit u = units.get(0);
 			if (!(u.getOwner().equals(managerLogin.getHuman()) ||
@@ -65,13 +65,13 @@ public class UnitServiceImpl implements UnitService {
 	@Transactional (readOnly = true)
 	@Override
 	public List<Unit> listAllUnits(Login manager) {
-		return unitDAO.listAllUnits(manager.getHuman());
+		return unitDao.listAllUnits(manager.getHuman());
 	}
 
 	@Transactional
 	@Override
 	public void removeUnit(Unit unit, Login managerLogin) throws AccessDeniedException {
-		Unit existingUnit = unitDAO.getUnit(unit.getId());
+		Unit existingUnit = unitDao.getUnit(unit.getId());
 		if (existingUnit == null || 
 				!existingUnit.getCompany().getOwner().equals(managerLogin.getHuman())) {
 			throw new AccessDeniedException();
@@ -80,24 +80,24 @@ public class UnitServiceImpl implements UnitService {
 		List<Human> humansOfUnit = humanService.listHuman(unit, managerLogin);
 		for (Human h:humansOfUnit)
 			humanService.removeHuman(h.getId(), managerLogin);
-		unitDAO.removeUnit(unit);
+		unitDao.removeUnit(unit);
 	}
 
 	@Transactional
 	@Override
 	public void updateUnit(Unit unit, Login managerLogin) throws AccessDeniedException {
-		Unit existingUnit = unitDAO.getUnit(unit.getId());
+		Unit existingUnit = unitDao.getUnit(unit.getId());
 		if (existingUnit == null || 
 				!existingUnit.getCompany().getOwner().equals(managerLogin.getHuman())) {
 			throw new AccessDeniedException();
 		}
-		unitDAO.updateUnit(unit);
+		unitDao.updateUnit(unit);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Unit getUnit(Long id, Login managerLogin) throws AccessDeniedException {
-		Unit existingUnit = unitDAO.getUnit(id);
+		Unit existingUnit = unitDao.getUnit(id);
 		if (existingUnit == null || 
 				!(
 						existingUnit.getCompany().getOwner().equals(managerLogin.getHuman()) ||

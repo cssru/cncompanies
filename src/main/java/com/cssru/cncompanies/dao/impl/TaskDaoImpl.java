@@ -1,22 +1,17 @@
 package com.cssru.cncompanies.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.hibernate.Query;
+import com.cssru.cncompanies.dao.TaskDao;
+import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Task;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cssru.cncompanies.dao.TaskDAO;
-import com.cssru.cncompanies.domain.Human;
-import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.domain.Task;
+import java.util.Date;
+import java.util.List;
 
 @Repository
-public class TaskDAOImpl implements TaskDAO {
+public class TaskDaoImpl implements TaskDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;

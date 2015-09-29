@@ -9,8 +9,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cssru.cncompanies.dao.HumanDAO;
-import com.cssru.cncompanies.dao.AccountDAO;
+import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.dto.AccountRegisterDto;
 import com.cssru.cncompanies.exception.AccessDeniedException;
@@ -31,10 +31,10 @@ public class AccountServiceImpl implements AccountService {
 	private HumanService humanService;
 
 	@Autowired
-	private AccountDAO accountDAO;
+	private AccountDao accountDAO;
 
 	@Autowired
-	private HumanDAO humanDAO;
+	private HumanDao humanDao;
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
@@ -65,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
 		}
 		
 		account.setHuman(human);
-		humanDAO.add(human);
+		humanDao.add(human);
 		accountDAO.add(account);
 
 		return account;

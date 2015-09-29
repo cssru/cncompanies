@@ -2,19 +2,18 @@ package com.cssru.cncompanies.service.impl;
 
 import java.util.List;
 
-import com.cssru.cncompanies.dao.AccountDAO;
+import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.dto.CompanyDto;
 import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cssru.cncompanies.dao.CompanyDAO;
+import com.cssru.cncompanies.dao.CompanyDao;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.exception.AccessDeniedException;
@@ -25,7 +24,7 @@ import com.cssru.cncompanies.service.UnitService;
 public class CompanyServiceImpl implements CompanyService {
 
 	@Autowired
-	private CompanyDAO companyDAO;
+	private CompanyDao companyDao;
 
 	@Autowired
 	private UnitService unitService;
@@ -34,7 +33,7 @@ public class CompanyServiceImpl implements CompanyService {
     private HumanService humanService;
 
 	@Autowired
-	private AccountDAO accountDao;
+	private AccountDao accountDao;
 
 	@Transactional
 	@Override
@@ -61,7 +60,7 @@ public class CompanyServiceImpl implements CompanyService {
         }
 
         company.setHolder(clientAccount);
-		companyDAO.save(company);
+		companyDao.save(company);
 	}
 
 	@Transactional (readOnly = true)
@@ -80,7 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
             throw new AccessDeniedException();
         }
 
-        return companyDAO.listByHolder(holder);
+        return companyDao.listByHolder(holder);
 	}
 
     @Transactional (readOnly = true)
@@ -99,13 +98,13 @@ public class CompanyServiceImpl implements CompanyService {
             throw new AccessDeniedException();
         }
 
-        return companyDAO.listByHolder(holder);
+        return companyDao.listByHolder(holder);
     }
 
     @Transactional
 	@Override
 	public void removeCompany(Long id, Login managerLogin) throws AccessDeniedException {
-		Company company = companyDAO.getCompany(id);
+		Company company = companyDao.getCompany(id);
 		
 		if (company == null || !company.getOwner().equals(managerLogin.getHuman())) {
 			throw new AccessDeniedException();
@@ -115,24 +114,24 @@ public class CompanyServiceImpl implements CompanyService {
 		List<Unit> unitsOfCompany = unitService.listUnit(company, managerLogin);
 		for (Unit u:unitsOfCompany)
 			unitService.removeUnit(u, managerLogin);
-		companyDAO.removeCompany(company);
+		companyDao.removeCompany(company);
 	}
 
 	@Transactional
 	@Override
 	public void updateCompany(Company company, Login managerLogin) throws AccessDeniedException {
-		Company existingCompany = companyDAO.getCompany(company.getId());
+		Company existingCompany = companyDao.getCompany(company.getId());
 		if (existingCompany == null || !existingCompany.getOwner().equals(managerLogin.getHuman())) {
 			throw new AccessDeniedException();
 		}
 		
-		companyDAO.updateCompany(company);
+		companyDao.updateCompany(company);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Company getCompany(Long id, Login managerLogin) throws AccessDeniedException {
-		Company resultCompany = companyDAO.getCompany(id);
+		Company resultCompany = companyDao.getCompany(id);
 		if (resultCompany == null || !resultCompany.getOwner().equals(managerLogin.getHuman())) {
 			throw new AccessDeniedException();
 		}

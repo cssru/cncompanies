@@ -1,35 +1,31 @@
 package com.cssru.cncompanies.dao.impl;
 
-import java.util.Date;
-import java.util.List;
-
-import org.hibernate.Query;
+import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.domain.Company;
+import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Unit;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cssru.cncompanies.dao.HumanDAO;
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Human;
-import com.cssru.cncompanies.domain.Unit;
+import java.util.List;
 
 @Repository
-public class HumanDAOImpl implements HumanDAO {
+public class HumanDaoImpl implements HumanDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Override
-	public void addHuman(Human human) {
-		human.setLastModified(new Date());
+	public void add(Human human) {
 		Session currentSession = sessionFactory.getCurrentSession();
 		currentSession.save(human);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Human> listHuman(Unit unit) {
+	public List<Human> list(Unit unit) {
 		return sessionFactory
 				.getCurrentSession()
 				.createQuery("from Human as h where h.unit = :unit")
@@ -39,7 +35,7 @@ public class HumanDAOImpl implements HumanDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Human> listHuman(Company company) {
+	public List<Human> list(Company company) {
 		return sessionFactory
 				.getCurrentSession()
 				.createQuery("from Human as h where h.unit.company = :company")
@@ -50,20 +46,20 @@ public class HumanDAOImpl implements HumanDAO {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Human> listHuman(long lastModified, Human manager) {
+	public List<Human> list(long version, Human manager) {
 		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Human as h where h.lastModified > :lastModified and (h.unit.owner = :manager or h.unit.company.owner = :manager)")
-				.setParameter("lastModified", new Date(lastModified))
+				.createQuery("from Human as h where h.version > :version and (h.unit.owner = :manager or h.unit.company.owner = :manager)")
+				.setParameter("version", version)
 				.setParameter("manager", manager)
 				.list();
 	}
 
 	@Override
-	public void removeHuman(Human human) {
+	public void delete(Long id) {
 		Object persistentObject = sessionFactory
 				.getCurrentSession()
-				.load(Human.class, human.getId());
+				.load(Human.class, id);
 		if (persistentObject != null) {
 			// it also deletes associated HumanMetadataElements
 					sessionFactory
@@ -73,7 +69,7 @@ public class HumanDAOImpl implements HumanDAO {
 	}
 
 	@Override
-	public void removeHumansWithoutLogins() {
+	public void deleteWithoutLogins() {
 		sessionFactory
 				.getCurrentSession()
 				.createQuery("delete from Human as h where h not in (select l.human from Login as l)")
@@ -81,12 +77,12 @@ public class HumanDAOImpl implements HumanDAO {
 	}
 
 	@Override
-	public void updateHuman(Human human) {
-		sessionFactory.getCurrentSession().merge(human);
+	public void update(Human human) {
+		sessionFactory.getCurrentSession().update(human);
 	}
 
 	@Override
-	public Human getHuman(Long id) {
+	public Human get(Long id) {
 		return (Human)sessionFactory
 				.getCurrentSession()
 				.createQuery("from Human as h where h.id = :id")

@@ -6,7 +6,7 @@ import com.cssru.cncompanies.domain.Human;
 
 import java.util.List;
 
-public interface CompanyDAO {
+public interface CompanyDao {
 	void save(Company company);
 	List<Company> listByManager(Human manager);
 	List<Company> listByHolder(Account holder);

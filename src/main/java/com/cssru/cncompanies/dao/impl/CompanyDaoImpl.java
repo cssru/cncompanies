@@ -1,6 +1,6 @@
 package com.cssru.cncompanies.dao.impl;
 
-import com.cssru.cncompanies.dao.CompanyDAO;
+import com.cssru.cncompanies.dao.CompanyDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @Repository
-public class CompanyDAOImpl implements CompanyDAO {
+public class CompanyDaoImpl implements CompanyDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;

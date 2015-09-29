@@ -1,10 +1,9 @@
 package com.cssru.cncompanies.utils;
 
-import com.cssru.cncompanies.dao.AccountDAO;
+import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.secure.HumanGrantedAuthority;
 import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.service.AccountService;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class Utils {
@@ -45,7 +44,7 @@ public class Utils {
                 .contains(new HumanGrantedAuthority(role));
     }
 
-    public static Account clientAccount(AccountDAO dao) {
+    public static Account clientAccount(AccountDao dao) {
         return dao.get(SecurityContextHolder
                 .getContext()
                 .getAuthentication()

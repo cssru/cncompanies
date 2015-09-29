@@ -1,6 +1,6 @@
 package com.cssru.cncompanies.dao.impl;
 
-import com.cssru.cncompanies.dao.AccountDAO;
+import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Human;
 import org.hibernate.SessionFactory;
@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public class AccountDAOImpl implements AccountDAO {
+public class AccountDaoImpl implements AccountDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;

@@ -1,30 +1,28 @@
 package com.cssru.cncompanies.dao.impl;
 
-import java.util.List;
-
-import org.hibernate.Query;
+import com.cssru.cncompanies.dao.CompanyDao;
+import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.UnitDao;
+import com.cssru.cncompanies.domain.Company;
+import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Unit;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.cssru.cncompanies.dao.CompanyDAO;
-import com.cssru.cncompanies.dao.HumanDAO;
-import com.cssru.cncompanies.dao.UnitDAO;
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Human;
-import com.cssru.cncompanies.domain.Unit;
+import java.util.List;
 
 @Repository
-public class UnitDAOImpl implements UnitDAO {
+public class UnitDaoImpl implements UnitDao {
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
 	@Autowired
-	CompanyDAO companyDAO;
+    CompanyDao companyDao;
 
 	@Autowired
-	HumanDAO humanDAO;
+    HumanDao humanDao;
 
 	@Override
 	public void add(Unit unit) {

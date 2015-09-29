@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cssru.cncompanies.dao.TaskDAO;
+import com.cssru.cncompanies.dao.TaskDao;
 import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Task;
@@ -29,135 +29,135 @@ public class TaskServiceImpl implements TaskService {
 	private AccountService accountService;
 
 	@Autowired
-	private TaskDAO taskDAO;
+	private TaskDao taskDao;
 
 	@Transactional
 	@Override
 	public void addTask(Task task, Human executor, Login managerLogin) {
-		taskDAO.addTask(task, executor, managerLogin);
+		taskDao.addTask(task, executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listUndoneTask(Human executor, Login managerLogin) {
-		return taskDAO.listUndoneTask(executor, managerLogin);
+		return taskDao.listUndoneTask(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listUndoneTasksForSlave(Login managerLogin) {
-		return taskDAO.listUndoneTasksForSlave(managerLogin);
+		return taskDao.listUndoneTasksForSlave(managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listDoneTasksForSlave(Login managerLogin) {
-		return taskDAO.listDoneTasksForSlave(managerLogin);
+		return taskDao.listDoneTasksForSlave(managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listDoneTask(Human executor, Login managerLogin) {
-		return taskDAO.listDoneTask(executor, managerLogin);
+		return taskDao.listDoneTask(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listAllTask(Human executor, Login managerLogin) {
-		return taskDAO.listAllTask(executor, managerLogin);
+		return taskDao.listAllTask(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listAllTask(Login managerLogin) {
-		return taskDAO.listAllTask(managerLogin);
+		return taskDao.listAllTask(managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listTaskWithAuthor(Human author, Login managerLogin) {
-		return taskDAO.listTaskWithAuthor(author, managerLogin);
+		return taskDao.listTaskWithAuthor(author, managerLogin);
 	}
 
 	@Transactional
 	@Override
 	public void removeTask(Long id, Login managerLogin) {
-		taskDAO.removeTask(id, managerLogin);
+		taskDao.removeTask(id, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Task getTask(Long id, Login managerLogin) {
-		return taskDAO.getTask(id, managerLogin);
+		return taskDao.getTask(id, managerLogin);
 	}
 
 	@Transactional
 	@Override
 	public void updateTask(Task task, Login managerLogin) {
-		taskDAO.updateTask(task, managerLogin);
+		taskDao.updateTask(task, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listArchiveTasksWithAuthor(Human author,
 			Login managerLogin) {
-		return taskDAO.listArchiveTasksWithAuthor(author, managerLogin);
+		return taskDao.listArchiveTasksWithAuthor(author, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listArchiveTasksForSlave(Login managerLogin) {
-		return taskDAO.listArchiveTasksForSlave(managerLogin);
+		return taskDao.listArchiveTasksForSlave(managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public List<Task> listArchiveTasks(Human executor, Login managerLogin) {
-		return taskDAO.listArchiveTasks(executor, managerLogin);
+		return taskDao.listArchiveTasks(executor, managerLogin);
 	}
 
 	// statistic
 	@Transactional (readOnly = true)
 	@Override
 	public Long getNormalTaskCount(Human executor, Login managerLogin) {
-		return taskDAO.getNormalTaskCount(executor, managerLogin);
+		return taskDao.getNormalTaskCount(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Long getExpiredTaskCount(Human executor, Login managerLogin) {
-		return taskDAO.getExpiredTaskCount(executor, managerLogin);
+		return taskDao.getExpiredTaskCount(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Long getNearestTaskCount(Human executor, Login managerLogin) {
-		return taskDAO.getNearestTaskCount(executor, managerLogin);
+		return taskDao.getNearestTaskCount(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Long getDoneTaskCount(Human executor, Login managerLogin) {
-		return taskDAO.getDoneTaskCount(executor, managerLogin);
+		return taskDao.getDoneTaskCount(executor, managerLogin);
 	}
 
 	@Transactional (readOnly = true)
 	@Override
 	public Long getArchiveTaskCount(Human executor, Login managerLogin) {
-		return taskDAO.getArchiveTaskCount(executor, managerLogin);
+		return taskDao.getArchiveTaskCount(executor, managerLogin);
 	}
 
 	// for ajax requests
 	@Transactional
 	@Override
 	public void setTaskContent(Task task, String content, Login managerLogin) {
-		taskDAO.setTaskContent(task, content, managerLogin);
+		taskDao.setTaskContent(task, content, managerLogin);
 	}
 
 	@Transactional
 	@Override
 	public void setTaskComment(Task task, String comment, Login managerLogin) {
-		taskDAO.setTaskComment(task, comment, managerLogin);
+		taskDao.setTaskComment(task, comment, managerLogin);
 	}
 
 	// RESTful
@@ -186,7 +186,7 @@ public class TaskServiceImpl implements TaskService {
 		}
 
 		// checking Server's objects, send new objects to client
-		List<Task> serverNewTasks = taskDAO.listTask(request.getLastSynchTime(), managerLogin);
+		List<Task> serverNewTasks = taskDao.listTask(request.getLastSynchTime(), managerLogin);
 		for (Task nextTask : serverNewTasks) {
 			response.addObject(new TaskJsonProxy(nextTask));
 		}
