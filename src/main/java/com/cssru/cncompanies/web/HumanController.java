@@ -30,8 +30,6 @@ import com.cssru.cncompanies.dto.AccountRegisterDto;
 import com.cssru.cncompanies.dto.ChangePasswordDto;
 import com.cssru.cncompanies.proxy.HumanWrapper;
 import com.cssru.cncompanies.proxy.PayProxy;
-import com.cssru.cncompanies.secure.BadLoginException;
-import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.service.AccountService;

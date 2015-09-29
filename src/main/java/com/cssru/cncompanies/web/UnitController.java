@@ -19,8 +19,6 @@ import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.dto.UnitDto;
-import com.cssru.cncompanies.secure.BadLoginException;
-import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.service.AccountService;

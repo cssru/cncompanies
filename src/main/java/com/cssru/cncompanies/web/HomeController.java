@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.secure.BadLoginException;
-import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.AccountService;
 
 @Controller

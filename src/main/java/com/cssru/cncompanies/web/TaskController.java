@@ -27,8 +27,6 @@ import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Task;
 import com.cssru.cncompanies.dto.TaskDto;
 import com.cssru.cncompanies.proxy.TaskJsonProxy;
-import com.cssru.cncompanies.secure.BadLoginException;
-import com.cssru.cncompanies.secure.LoginChecker;
 import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.TaskService;
