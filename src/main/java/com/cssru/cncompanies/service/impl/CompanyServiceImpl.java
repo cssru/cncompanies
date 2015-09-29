@@ -151,7 +151,7 @@ public class CompanyServiceImpl implements CompanyService {
                     throw new AccessDeniedException(); // then access must be denied
                 }
 
-                if (!(newManager.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) || // if current user isn't new manager's company manager
+                if (!((newManager.getUnit().getCompany().getManager() != null && newManager.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) || // if current user isn't new manager's company manager
                         newManager.getUnit().getCompany().getHolder().equals(clientAccount))) { // nor account holder
                     throw new AccessDeniedException(); // then access must be denied
                 }
@@ -172,7 +172,8 @@ public class CompanyServiceImpl implements CompanyService {
 
         if (resultCompany == null || // company must exist
                 // and current user must be the company manager or Account Holder
-                !(resultCompany.getManager().equals(clientAccount.getHuman()) || resultCompany.getHolder().equals(clientAccount))) {
+                !((resultCompany.getManager() != null && resultCompany.getManager().equals(clientAccount.getHuman())) ||
+                        resultCompany.getHolder().equals(clientAccount))) {
             throw new AccessDeniedException();
         }
 

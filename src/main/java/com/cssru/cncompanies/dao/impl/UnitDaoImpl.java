@@ -44,7 +44,7 @@ public class UnitDaoImpl implements UnitDao {
 	public List<Unit> list(Human unitManager) {
 		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Unit as u where u.manager = :manager")
+				.createQuery("from Unit where manager = :manager")
 				.setParameter("manager", unitManager)
 				.list();
 	}
@@ -54,18 +54,14 @@ public class UnitDaoImpl implements UnitDao {
 	public List<Unit> listVisible(Human manager) {
 		return sessionFactory
 				.getCurrentSession()
-				.createQuery("from Unit as u where u.company.owner = :manager or u.owner = :manager")
+				.createQuery("from Unit where company.manager = :manager or manager = :manager")
 				.setParameter("manager", manager)
 				.list();
 	}
 
 	@Override
 	public void delete(Unit unit) {
-		Unit persistentUnit = (Unit)sessionFactory
-				.getCurrentSession()
-				.load(Unit.class, unit.getId());
-		if (persistentUnit != null)
-			sessionFactory.getCurrentSession().delete(persistentUnit);
+        sessionFactory.getCurrentSession().delete(unit);
 	}
 
 	@Override

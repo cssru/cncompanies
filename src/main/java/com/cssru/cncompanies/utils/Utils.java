@@ -2,6 +2,7 @@ package com.cssru.cncompanies.utils;
 
 import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.domain.Account;
+import com.cssru.cncompanies.domain.Human;
 import com.cssru.cncompanies.secure.HumanGrantedAuthority;
 import com.cssru.cncompanies.secure.Role;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +50,16 @@ public class Utils {
                 .getContext()
                 .getAuthentication()
                 .getName());
+    }
+
+    public static String humanName(Human human) {
+        return (human == null) ? "" :
+                new StringBuilder(human.getSurname())
+                .append(" ")
+                .append(human.getName().charAt(0))
+                .append(".")
+                .append(human.getLastname().charAt(0))
+                .append(".").toString();
     }
 
 }

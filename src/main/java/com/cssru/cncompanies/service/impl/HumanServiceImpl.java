@@ -44,8 +44,8 @@ public class HumanServiceImpl implements HumanService {
 
         Account clientAccount = Utils.clientAccount(accountDao);
         // to add human client must be the Unit Manager, the Company Manager or the Account Holder
-        if (!(unit.getManager().equals(clientAccount.getHuman()) ||
-                unit.getCompany().getManager().equals(clientAccount.getHuman()) ||
+        if (!((unit.getManager() != null && unit.getManager().equals(clientAccount.getHuman())) ||
+                (unit.getCompany().getManager() != null && unit.getCompany().getManager().equals(clientAccount.getHuman())) ||
                 unit.getCompany().getHolder().equals(clientAccount)
         )) {
             throw new AccessDeniedException();
@@ -78,8 +78,8 @@ public class HumanServiceImpl implements HumanService {
 
         Account clientAccount = Utils.clientAccount(accountDao);
         // to list unit's humans client must be the Unit Manager, the Company Manager or the Account Holder
-        if (!(unit.getManager().equals(clientAccount.getHuman()) ||
-                unit.getCompany().getManager().equals(clientAccount.getHuman()) ||
+        if (!((unit.getManager() != null && unit.getManager().equals(clientAccount.getHuman())) ||
+                (unit.getCompany().getManager() != null && unit.getCompany().getManager().equals(clientAccount.getHuman())) ||
                 unit.getCompany().getHolder().equals(clientAccount)
         )) {
             throw new AccessDeniedException();
@@ -114,7 +114,7 @@ public class HumanServiceImpl implements HumanService {
 
         Account clientAccount = Utils.clientAccount(accountDao);
         // to list unit's humans client must be the Company Manager or the Account Holder
-        if (!(company.getManager().equals(clientAccount.getHuman()) ||
+        if (!((company.getManager() != null && company.getManager().equals(clientAccount.getHuman())) ||
                 company.getHolder().equals(clientAccount)
         )) {
             throw new AccessDeniedException();
@@ -147,8 +147,8 @@ public class HumanServiceImpl implements HumanService {
 
         Account clientAccount = Utils.clientAccount(accountDao);
         // to list unit's humans client must be the Unit Manager, the Company Manager or the Account Holder
-        if (!(human.getUnit().getManager().equals(clientAccount.getHuman()) ||
-                human.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) ||
+        if (!((human.getUnit().getManager() != null && human.getUnit().getManager().equals(clientAccount.getHuman())) ||
+                (human.getUnit().getCompany().getManager() != null && human.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) ||
                 human.getUnit().getCompany().getHolder().equals(clientAccount)
         )) {
             throw new AccessDeniedException();
@@ -177,9 +177,9 @@ public class HumanServiceImpl implements HumanService {
 
             Account clientAccount = Utils.clientAccount(accountDao);
             // to change human's unit client must be the Company Manager or the Account Holder
-            if (!(human.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) ||
+            if (!((human.getUnit().getCompany().getManager() != null && human.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) ||
                     human.getUnit().getCompany().getHolder().equals(clientAccount) ||
-                    unit.getCompany().getManager().equals(clientAccount.getHuman()) ||
+                    (unit.getCompany().getManager() != null && unit.getCompany().getManager().equals(clientAccount.getHuman())) ||
                     unit.getCompany().getHolder().equals(clientAccount)
             )) {
                 throw new AccessDeniedException();
@@ -214,8 +214,8 @@ public class HumanServiceImpl implements HumanService {
 
         Account clientAccount = Utils.clientAccount(accountDao);
         // to get human client must be the Unit Manager, the Company Manager or the Account Holder
-        if (!(human.getUnit().getManager().equals(clientAccount.getHuman()) ||
-                human.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) ||
+        if (!((human.getUnit().getManager() != null && human.getUnit().getManager().equals(clientAccount.getHuman())) ||
+                (human.getUnit().getCompany().getManager() != null && human.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) ||
                 human.getUnit().getCompany().getHolder().equals(clientAccount)
         )) {
             throw new AccessDeniedException();

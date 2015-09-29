@@ -1,112 +1,249 @@
 package com.cssru.cncompanies.service.impl;
 
+import com.cssru.cncompanies.dao.AccountDao;
+import com.cssru.cncompanies.dao.CompanyDao;
+import com.cssru.cncompanies.dao.HumanDao;
 import com.cssru.cncompanies.dao.UnitDao;
+import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
-import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Unit;
+import com.cssru.cncompanies.dto.UnitDto;
 import com.cssru.cncompanies.exception.AccessDeniedException;
-import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.HumanService;
 import com.cssru.cncompanies.service.UnitService;
+import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UnitServiceImpl implements UnitService {
 
-	@Autowired
-	private UnitDao unitDao;
+    @Autowired
+    private UnitDao unitDao;
 
-	@Autowired
-	private HumanService humanService;
+    @Autowired
+    private HumanDao humanDao;
 
-	@Autowired
-	private CompanyService companyService;
+    @Autowired
+    private CompanyDao companyDao;
 
-	@Transactional
-	@Override
-	public void addUnit(Unit unit, Company company, Login managerLogin) throws AccessDeniedException {
-		Company existingCompany = companyService.getCompany(company.getId(), managerLogin);
-		if (existingCompany == null) {
-			throw new AccessDeniedException();
-		}
-		unit.setCompany(existingCompany);
-		unitDao.addUnit(unit);
-	}
+    @Autowired
+    private AccountDao accountDao;
 
-	@Transactional (readOnly = true)
-	@Override
-	public List<Unit> listUnit(Company company, Login managerLogin) throws AccessDeniedException {
-		Company existingCompany = companyService.getCompany(company.getId(), managerLogin);
-		if (existingCompany == null) {
-			throw new AccessDeniedException();
-		}
-		return unitDao.listUnit(existingCompany);
-	}
+    @Transactional
+    @Override
+    public void add(UnitDto unitDto) throws AccessDeniedException {
+        Account clientAccount = Utils.clientAccount(accountDao);
+        Company company = companyDao.get(unitDto.getCompanyId());
+        if (company == null) {
+            throw new AccessDeniedException();
+        }
 
-	@Transactional (readOnly = true)
-	@Override
-	public List<Unit> listUnitsWithOwner(Human unitOwner, Login managerLogin) throws AccessDeniedException {
-		List<Unit> units = unitDao.listUnitsWithOwner(unitOwner);
-		if (!units.isEmpty()) {
-			Unit u = units.get(0);
-			if (!(u.getOwner().equals(managerLogin.getHuman()) ||
-			u.getCompany().getOwner().equals(managerLogin.getHuman()))) {
-				throw new AccessDeniedException();
-			}
-		}
-		return units;
-	}
+        if (!company.getHolder().equals(clientAccount))
+            if (company.getManager() != null) {
+                if (!company.getManager().equals(clientAccount.getHuman())) {
+                    throw new AccessDeniedException(); // if company has manager and current user isn't company's Account Holder nor company's manager
+                }
+            } else {
+                throw new AccessDeniedException(); // if company has no manager and current user isn't company's Account Holder
+            }
+        // now current user has rights to add new Unit to company
 
-	@Transactional (readOnly = true)
-	@Override
-	public List<Unit> listAllUnits(Login manager) {
-		return unitDao.listAllUnits(manager.getHuman());
-	}
+        // check if unit manager is accessible for current user
+        Human manager = humanDao.get(unitDto.getManagerId());
 
-	@Transactional
-	@Override
-	public void removeUnit(Unit unit, Login managerLogin) throws AccessDeniedException {
-		Unit existingUnit = unitDao.getUnit(unit.getId());
-		if (existingUnit == null || 
-				!existingUnit.getCompany().getOwner().equals(managerLogin.getHuman())) {
-			throw new AccessDeniedException();
-		}
+        if (manager == null) {
+            throw new AccessDeniedException();
+        }
 
-		List<Human> humansOfUnit = humanService.listHuman(unit, managerLogin);
-		for (Human h:humansOfUnit)
-			humanService.removeHuman(h.getId(), managerLogin);
-		unitDao.removeUnit(unit);
-	}
+        if (!manager.getUnit().getCompany().getHolder().equals(clientAccount))
+            if (manager.getUnit().getCompany().getManager() != null) {
+                if (!manager.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) {
+                    throw new AccessDeniedException(); // if current user isn't pretendent's company's Account Holder nor pretendent's company's manager
+                }
+            } else {
+                throw new AccessDeniedException(); // if pretendent's company has no manager and current user isn't company's Account Holder
+            }
+        Unit unit = new Unit();
+        unitDto.mapTo(unit);
+        unit.setCompany(company);
+        unit.setManager(manager);
 
-	@Transactional
-	@Override
-	public void updateUnit(Unit unit, Login managerLogin) throws AccessDeniedException {
-		Unit existingUnit = unitDao.getUnit(unit.getId());
-		if (existingUnit == null || 
-				!existingUnit.getCompany().getOwner().equals(managerLogin.getHuman())) {
-			throw new AccessDeniedException();
-		}
-		unitDao.updateUnit(unit);
-	}
+        unitDao.add(unit);
+    }
 
-	@Transactional (readOnly = true)
-	@Override
-	public Unit getUnit(Long id, Login managerLogin) throws AccessDeniedException {
-		Unit existingUnit = unitDao.getUnit(id);
-		if (existingUnit == null || 
-				!(
-						existingUnit.getCompany().getOwner().equals(managerLogin.getHuman()) ||
-						existingUnit.getOwner().equals(managerLogin.getHuman())
-						)
-				) {
-			throw new AccessDeniedException();
-		}
-		return existingUnit;
-	}
+    @Transactional (readOnly = true)
+    @Override
+    public UnitDto get(Long id) throws AccessDeniedException {
+        Account clientAccount = Utils.clientAccount(accountDao);
+        Unit unit = unitDao.get(id);
+
+        if (unit == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!(unit.getCompany().getHolder().equals(clientAccount) ||
+                (unit.getCompany().getManager() != null && unit.getCompany().getManager().equals(clientAccount.getHuman())) ||
+                (unit.getManager() != null && unit.getManager().equals(clientAccount.getHuman())))) {
+            throw new AccessDeniedException();
+        }
+        UnitDto result = new UnitDto();
+        result.mapFrom(unit);
+        result.setManagerId(unit.getManager() != null ? unit.getManager().getId() : null);
+        result.setCompanyId(unit.getCompany().getId());
+        result.setManagerName(unit.getManager() != null ? unit.getManager().getName() : "");
+
+        return result;
+    }
+
+    @Transactional
+    @Override
+    public void update(UnitDto unitDto) throws AccessDeniedException {
+        Account clientAccount = Utils.clientAccount(accountDao);
+
+        Unit unit = unitDao.get(unitDto.getId());
+        if (unit == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!(
+                (unit.getCompany().getManager() != null && unit.getCompany().getManager().equals(clientAccount.getHuman())) ||
+                        unit.getCompany().getHolder().equals(clientAccount)
+                )) {
+            throw new AccessDeniedException();
+        }
+
+        Company company = companyDao.get(unitDto.getCompanyId());
+        if (company == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!company.getHolder().equals(clientAccount))
+            if (company.getManager() != null) {
+                if (!company.getManager().equals(clientAccount.getHuman())) {
+                    throw new AccessDeniedException(); // if company has manager and current user isn't company's Account Holder nor company's manager
+                }
+            } else {
+                throw new AccessDeniedException(); // if company has no manager and current user isn't company's Account Holder
+            }
+        // now current user has rights to add new Unit to company
+
+        // check if unit manager is accessible for current user
+        Human manager = humanDao.get(unitDto.getManagerId());
+
+        if (manager == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!manager.getUnit().getCompany().getHolder().equals(clientAccount))
+            if (manager.getUnit().getCompany().getManager() != null) {
+                if (!manager.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) {
+                    throw new AccessDeniedException(); // if current user isn't pretendent's company's Account Holder nor pretendent's company's manager
+                }
+            } else {
+                throw new AccessDeniedException(); // if pretendent's company has no manager and current user isn't company's Account Holder
+            }
+
+
+        unitDto.mapTo(unit);
+        unit.setCompany(company);
+        unit.setManager(manager);
+
+        unitDao.update(unit);
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) throws AccessDeniedException {
+        Account clientAccount = Utils.clientAccount(accountDao);
+
+        Unit unit = unitDao.get(id);
+
+        if (unit == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!(
+                unit.getCompany().getHolder().equals(clientAccount) ||
+                (unit.getCompany().getManager() != null && unit.getCompany().getManager().equals(clientAccount.getHuman()))
+        )) {
+            throw new AccessDeniedException();
+        }
+
+        unitDao.delete(unit);
+    }
+
+    @Transactional (readOnly = true)
+    @Override
+    public List<UnitDto> listByCompany(Long companyId) throws AccessDeniedException {
+        Account clientAccount = Utils.clientAccount(accountDao);
+
+        Company company = companyDao.get(companyId);
+
+        if (company == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!(
+                (company.getManager() != null && company.getManager().equals(clientAccount.getHuman())) ||
+                        company.getHolder().equals(clientAccount)
+                )) {
+            throw new AccessDeniedException();
+        }
+
+        List<UnitDto> result = new ArrayList<>(company.getUnits().size());
+        for (Unit unit : company.getUnits()) {
+            UnitDto newDto = new UnitDto();
+            newDto.mapFrom(unit);
+            newDto.setCompanyId(company.getId());
+            newDto.setManagerId(unit.getManager() != null ? unit.getManager().getId() : null);
+            newDto.setManagerName(Utils.humanName(unit.getManager()));
+            result.add(newDto);
+        }
+
+        return result;
+    }
+
+    @Transactional (readOnly = true)
+    @Override
+    public List<UnitDto> listByManager(Long managerId) throws AccessDeniedException {
+        Account clientAccount = Utils.clientAccount(accountDao);
+
+        Human human = humanDao.get(managerId);
+
+        if (company == null) {
+            throw new AccessDeniedException();
+        }
+
+        if (!(
+                (company.getManager() != null && company.getManager().equals(clientAccount.getHuman())) ||
+                        company.getHolder().equals(clientAccount)
+        )) {
+            throw new AccessDeniedException();
+        }
+
+        List<UnitDto> result = new ArrayList<>(company.getUnits().size());
+        for (Unit unit : company.getUnits()) {
+            UnitDto newDto = new UnitDto();
+            newDto.mapFrom(unit);
+            newDto.setCompanyId(company.getId());
+            newDto.setManagerId(unit.getManager() != null ? unit.getManager().getId() : null);
+            newDto.setManagerName(Utils.humanName(unit.getManager()));
+            result.add(newDto);
+        }
+
+        return result;
+    }
+
+    @Transactional (readOnly = true)
+    @Override
+    public List<UnitDto> list() {
+        Account clientAccount = Utils.clientAccount(accountDao);
+
+    }
 
 }
