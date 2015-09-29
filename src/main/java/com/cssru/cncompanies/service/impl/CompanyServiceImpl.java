@@ -1,24 +1,23 @@
 package com.cssru.cncompanies.service.impl;
 
-import java.util.List;
-
 import com.cssru.cncompanies.dao.AccountDao;
+import com.cssru.cncompanies.dao.CompanyDao;
+import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.UnitDao;
 import com.cssru.cncompanies.domain.Account;
+import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.dto.CompanyDto;
+import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cssru.cncompanies.dao.CompanyDao;
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Unit;
-import com.cssru.cncompanies.exception.AccessDeniedException;
-import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.UnitService;
+import java.util.List;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -27,10 +26,10 @@ public class CompanyServiceImpl implements CompanyService {
 	private CompanyDao companyDao;
 
 	@Autowired
-	private UnitService unitService;
+	private UnitDao unitDao;
 
     @Autowired
-    private HumanService humanService;
+    private HumanDao humanDao;
 
 	@Autowired
 	private AccountDao accountDao;
@@ -39,18 +38,19 @@ public class CompanyServiceImpl implements CompanyService {
 	@Override
 	public void add(CompanyDto companyDto) throws AccessDeniedException {
 
-		if (!Utils.clientHasRole(Role.ACCOUNT_HOLDER)) {
-			throw new AccessDeniedException();
-		}
-
 		Account clientAccount = Utils.clientAccount(accountDao);
-		if (clientAccount == null) {
-			throw new AccessDeniedException();
-		}
 
         Company company = new Company();
-        company.setName(companyDto.getName());
-        company.setDescription(companyDto.getDescription());
+        companyDto.mapTo(company);
+
+        // company manager not mapped
+        if (companyDto.getManagerId() != null) {
+            Human companyManager = humanDao.get(companyDto.getManagerId());
+            if (companyManager == null) {
+                throw new AccessDeniedException();
+            }
+            company.setManager(companyManager);
+        }
 
         if (companyDto.getManagerId() == null) {
             company.setManager(clientAccount.getHuman()); // default manager is account holder

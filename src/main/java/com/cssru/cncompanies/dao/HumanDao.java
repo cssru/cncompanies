@@ -13,6 +13,7 @@ public interface HumanDao {
 	List<Human> list(Company company);
 	List<Human> list(long lastModified, Human manager);
 	void delete(Long id);
+    void delete(Human human);
 	void deleteWithoutLogins();
 	void update(Human human);
 }

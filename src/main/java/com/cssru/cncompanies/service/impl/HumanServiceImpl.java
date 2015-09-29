@@ -9,14 +9,12 @@ import com.cssru.cncompanies.dto.HumanDto;
 import com.cssru.cncompanies.dto.HumanMetadataElementDto;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -24,9 +22,6 @@ public class HumanServiceImpl implements HumanService {
 
     @Autowired
     private HumanDao humanDao;
-
-    @Autowired
-    private TaskService taskService;
 
     @Autowired
     private UnitDao unitDao;
@@ -61,14 +56,14 @@ public class HumanServiceImpl implements HumanService {
         // human's unit and metadata was not mapped
         human.setUnit(unit);
         // setup human's metadata
-        List<HumanMetadataElement> metadata = new ArrayList<HumanMetadataElement>(humanDto.getMetadata().size());
+        List<HumanMetadataElement> metadata = new ArrayList<>(humanDto.getMetadata().size());
         for (HumanMetadataElementDto elementDto : humanDto.getMetadata()) {
             HumanMetadataElement newMetadataElement = new HumanMetadataElement();
             elementDto.mapTo(newMetadataElement);
             metadata.add(newMetadataElement);
         }
         human.setMetadata(metadata);
-        humanDao.addHuman(human);
+        humanDao.add(human);
     }
 
     @Transactional (readOnly = true)
@@ -90,12 +85,12 @@ public class HumanServiceImpl implements HumanService {
             throw new AccessDeniedException();
         }
 
-        List<HumanDto> result = new ArrayList<HumanDto>(unit.getHumans().size());
+        List<HumanDto> result = new ArrayList<>(unit.getHumans().size());
         for (Human human : unit.getHumans()) {
             HumanDto humanDto = new HumanDto();
             humanDto.mapFrom(human);
             humanDto.setUnitId(unitId);
-            ArrayList<HumanMetadataElementDto> metadataDto = new ArrayList<HumanMetadataElementDto>(human.getMetadata().size());
+            ArrayList<HumanMetadataElementDto> metadataDto = new ArrayList<>(human.getMetadata().size());
             for (HumanMetadataElement element : human.getMetadata()) {
                 HumanMetadataElementDto elementDto = new HumanMetadataElementDto();
                 elementDto.mapFrom(element);
@@ -127,12 +122,12 @@ public class HumanServiceImpl implements HumanService {
 
         List<Human> allHumans = humanDao.list(company);
 
-        List<HumanDto> result = new ArrayList<HumanDto>(allHumans.size());
+        List<HumanDto> result = new ArrayList<>(allHumans.size());
         for (Human human : allHumans) {
             HumanDto humanDto = new HumanDto();
             humanDto.mapFrom(human);
             humanDto.setUnitId(human.getUnit().getId());
-            ArrayList<HumanMetadataElementDto> metadataDto = new ArrayList<HumanMetadataElementDto>(human.getMetadata().size());
+            ArrayList<HumanMetadataElementDto> metadataDto = new ArrayList<>(human.getMetadata().size());
             for (HumanMetadataElement element : human.getMetadata()) {
                 HumanMetadataElementDto elementDto = new HumanMetadataElementDto();
                 elementDto.mapFrom(element);
@@ -150,62 +145,94 @@ public class HumanServiceImpl implements HumanService {
     public void delete(Long id) throws AccessDeniedException {
         Human human = humanDao.get(id);
 
-        if (human == null) {
+        Account clientAccount = Utils.clientAccount(accountDao);
+        // to list unit's humans client must be the Unit Manager, the Company Manager or the Account Holder
+        if (!(human.getUnit().getManager().equals(clientAccount.getHuman()) ||
+                human.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) ||
+                human.getUnit().getCompany().getHolder().equals(clientAccount)
+        )) {
             throw new AccessDeniedException();
         }
 
-        // delete all tasks linked to the human
-        List<Task> tasksForHuman = taskService.listAllTask(human, managerLogin);
-        for (Task t:tasksForHuman)
-            taskService.removeTask(t.getId(), managerLogin);
-        List<Task> tasksWithAuthor = taskService.listTaskWithAuthor(human, managerLogin);
-        for (Task t:tasksWithAuthor) {
-            // delete human's own tasks for himself
-            if (t.getAuthor().equals(human)) {
-                taskService.removeTask(t.getId(), managerLogin);
-            } else {
-                // else set manager as task author (do not delete tasks for another users)
-                t.setAuthor(managerLogin.getHuman());
-                taskService.updateTask(t, managerLogin);
-            }
-        }
-
-        List<Unit> units = unitService.listUnitsWithOwner(human, managerLogin);
-        for (Unit u:units) {
-            u.setOwner(null);
-            unitService.updateUnit(u, managerLogin);
-        }
-
-        humanDAO.removeHuman(human);
+        humanDao.delete(human);
     }
 
     @Transactional
     @Override
-    public void updateHuman(Human human, Login managerLogin) throws AccessDeniedException {
-        Human existingHuman = humanDAO.getHuman(human.getId());
-        if (existingHuman == null ||
-                !(existingHuman.getUnit().getOwner().equals(managerLogin.getHuman()) ||
-                        existingHuman.getUnit().getCompany().getOwner().equals(managerLogin.getHuman()))
-                ) {
+    public void update(HumanDto humanDto) throws AccessDeniedException {
+        Human human = humanDao.get(humanDto.getId());
+
+        if (human == null) {
             throw new AccessDeniedException();
         }
 
-        humanDAO.updateHuman(human);
+        if (!human.getUnit().getId().equals(humanDto.getUnitId())) {
+            // it happens when someone try to change Human's unit (move human to another unit)
+            // this person must be Company Manager or Account Holder
+            Unit unit = unitDao.get(humanDto.getUnitId());
+
+            if (unit == null) {
+                throw new AccessDeniedException();
+            }
+
+            Account clientAccount = Utils.clientAccount(accountDao);
+            // to change human's unit client must be the Company Manager or the Account Holder
+            if (!(human.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) ||
+                    human.getUnit().getCompany().getHolder().equals(clientAccount) ||
+                    unit.getCompany().getManager().equals(clientAccount.getHuman()) ||
+                    unit.getCompany().getHolder().equals(clientAccount)
+            )) {
+                throw new AccessDeniedException();
+            }
+            human.setUnit(unit);
+        }
+
+        humanDto.mapTo(human);
+
+        // setup human's metadata, because it was not mapped
+        List<HumanMetadataElement> metadata = new ArrayList<>(humanDto.getMetadata().size());
+
+        for (HumanMetadataElementDto elementDto : humanDto.getMetadata()) {
+            HumanMetadataElement newMetadataElement = new HumanMetadataElement();
+            elementDto.mapTo(newMetadataElement);
+            metadata.add(newMetadataElement);
+        }
+
+        human.setMetadata(metadata);
+
+        humanDao.update(human);
     }
 
     @Transactional (readOnly = true)
     @Override
-    public Human getHuman(Long id, Login managerLogin) throws AccessDeniedException {
-        Human human = humanDAO.getHuman(id);
-        if (human == null ||
-                !(human.getId().equals(id) ||
-                        human.getUnit().getOwner().equals(managerLogin.getHuman()) ||
-                        human.getUnit().getCompany().getOwner().equals(managerLogin.getHuman()))
-                ) {
+    public HumanDto get(Long id) throws AccessDeniedException {
+        Human human = humanDao.get(id);
+
+        if (human == null) {
             throw new AccessDeniedException();
         }
 
-        return human;
+        Account clientAccount = Utils.clientAccount(accountDao);
+        // to get human client must be the Unit Manager, the Company Manager or the Account Holder
+        if (!(human.getUnit().getManager().equals(clientAccount.getHuman()) ||
+                human.getUnit().getCompany().getManager().equals(clientAccount.getHuman()) ||
+                human.getUnit().getCompany().getHolder().equals(clientAccount)
+        )) {
+            throw new AccessDeniedException();
+        }
+
+        HumanDto result = new HumanDto();
+        result.mapFrom(human);
+        result.setUnitId(human.getUnit().getId());
+
+        ArrayList<HumanMetadataElementDto> metadataDto = new ArrayList<>(human.getMetadata().size());
+        for (HumanMetadataElement element : human.getMetadata()) {
+            HumanMetadataElementDto elementDto = new HumanMetadataElementDto();
+            elementDto.mapFrom(element);
+            metadataDto.add(elementDto);
+        }
+        result.setMetadata(metadataDto);
+        return result;
     }
 
 }
