@@ -2,9 +2,9 @@ package com.cssru.cncompanies.exception;
 
 public class AccessDeniedException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
 
 }

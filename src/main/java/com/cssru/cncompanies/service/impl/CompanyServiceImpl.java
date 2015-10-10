@@ -6,7 +6,7 @@ import com.cssru.cncompanies.dao.HumanDao;
 import com.cssru.cncompanies.dao.UnitDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.dto.CompanyDto;
 import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.CompanyService;
@@ -44,7 +44,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         // company manager not mapped
         if (companyDto.getManagerId() != null) {
-            Human companyManager = humanDao.get(companyDto.getManagerId());
+            Employee companyManager = humanDao.get(companyDto.getManagerId());
             if (companyManager == null) {
                 throw new AccessDeniedException();
             }
@@ -55,7 +55,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyDao.save(company);
     }
 
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     @Override
     public List<CompanyDto> list() throws AccessDeniedException {
 
@@ -77,13 +77,13 @@ public class CompanyServiceImpl implements CompanyService {
         return result;
     }
 
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     @Override
     public List<CompanyDto> list(Long managerId) throws AccessDeniedException {
 
         Account clientAccount = Utils.clientAccount(accountDao);
 
-        Human manager = humanDao.get(managerId);
+        Employee manager = humanDao.get(managerId);
 
         if (manager == null) {
             throw new AccessDeniedException();
@@ -133,7 +133,7 @@ public class CompanyServiceImpl implements CompanyService {
         Account clientAccount = Utils.clientAccount(accountDao);
 
         if (company == null || // if company not exists
-                !(company.getManager().equals(clientAccount.getHuman()) || // or current user isn't company manager
+                !(company.getManager().equals(clientAccount.getEmployee()) || // or current user isn't company manager
                         company.getHolder().equals(clientAccount))) { // or it's holder
             throw new AccessDeniedException();
         }
@@ -146,12 +146,12 @@ public class CompanyServiceImpl implements CompanyService {
             if (companyDto.getManagerId() == null) { // if we need to set company's msnsger to null
                 company.setManager(null); // we do it
             } else {
-                Human newManager = humanDao.get(companyDto.getManagerId()); // if new manager is not null, get it from database by given in DTO id
-                if (newManager == null) { // if no such Human exists
+                Employee newManager = humanDao.get(companyDto.getManagerId()); // if new manager is not null, get it from database by given in DTO id
+                if (newManager == null) { // if no such Employee exists
                     throw new AccessDeniedException(); // then access must be denied
                 }
 
-                if (!((newManager.getUnit().getCompany().getManager() != null && newManager.getUnit().getCompany().getManager().equals(clientAccount.getHuman())) || // if current user isn't new manager's company manager
+                if (!((newManager.getUnit().getCompany().getManager() != null && newManager.getUnit().getCompany().getManager().equals(clientAccount.getEmployee())) || // if current user isn't new manager's company manager
                         newManager.getUnit().getCompany().getHolder().equals(clientAccount))) { // nor account holder
                     throw new AccessDeniedException(); // then access must be denied
                 }
@@ -164,7 +164,7 @@ public class CompanyServiceImpl implements CompanyService {
         companyDao.update(company);
     }
 
-    @Transactional (readOnly = true)
+    @Transactional(readOnly = true)
     @Override
     public Company get(Long id) throws AccessDeniedException {
         Company resultCompany = companyDao.get(id);
@@ -172,7 +172,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         if (resultCompany == null || // company must exist
                 // and current user must be the company manager or Account Holder
-                !((resultCompany.getManager() != null && resultCompany.getManager().equals(clientAccount.getHuman())) ||
+                !((resultCompany.getManager() != null && resultCompany.getManager().equals(clientAccount.getEmployee())) ||
                         resultCompany.getHolder().equals(clientAccount))) {
             throw new AccessDeniedException();
         }

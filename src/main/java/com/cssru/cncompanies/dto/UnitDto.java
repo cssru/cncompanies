@@ -15,9 +15,9 @@ public class UnitDto extends Dto {
     @NotMapped
     private String managerName;
 
-	private String name;
-	private String description;
+    private String name;
+    private String description;
 
     @NotMapped
-	private Long companyId;
+    private Long companyId;
 }

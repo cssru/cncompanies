@@ -1,5 +1,7 @@
 package com.cssru.cncompanies.config;
 
+import com.cssru.cncompanies.secure.Role;
+import com.cssru.cncompanies.service.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,61 +12,58 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.service.impl.UserDetailsServiceImpl;
-
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
 
-	// регистрируем нашу реализацию UserDetailsService
-	// а также PasswordEncoder
-	@Autowired
-	public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-		auth
-		.userDetailsService(userDetailsService)
-		.passwordEncoder(getPasswordEncoder());
-	}
+    // регистрируем нашу реализацию UserDetailsService
+    // а также PasswordEncoder
+    @Autowired
+    public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(getPasswordEncoder());
+    }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-		.authorizeRequests()
-		.antMatchers("/resources/**", "/**").permitAll()
-		.antMatchers("/", "/login", "/registration").permitAll()
-		.antMatchers("/company.*").hasRole(Role.COMPANY_MANAGER.name())
-		.antMatchers("/unit.*").hasRole(Role.COMPANY_MANAGER.name())
-		.antMatchers("/human.*").hasAnyRole(Role.COMPANY_MANAGER.name(), Role.UNIT_MANAGER.name())
-		.antMatchers("/admin/*").hasRole(Role.ADMIN.name());
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .authorizeRequests()
+                .antMatchers("/resources/**", "/**").permitAll()
+                .antMatchers("/", "/login", "/registration").permitAll()
+                .antMatchers("/company.*").hasRole(Role.COMPANY_MANAGER.name())
+                .antMatchers("/unit.*").hasRole(Role.COMPANY_MANAGER.name())
+                .antMatchers("/employee.*").hasAnyRole(Role.COMPANY_MANAGER.name(), Role.UNIT_MANAGER.name())
+                .antMatchers("/admin/*").hasRole(Role.ADMIN.name());
 
-		http.formLogin()
-		.loginPage("/")
-		.loginProcessingUrl("/j_spring_security_check")
-		.failureUrl("/badlogin")
-		.usernameParameter("j_username")
-		.passwordParameter("j_password")
-		.permitAll();
+        http.formLogin()
+                .loginPage("/")
+                .loginProcessingUrl("/j_spring_security_check")
+                .failureUrl("/badlogin")
+                .usernameParameter("j_username")
+                .passwordParameter("j_password")
+                .permitAll();
 
-		http.logout()
-		.permitAll()
-		.logoutUrl("/logout")
-		.logoutSuccessUrl("/")
-		.invalidateHttpSession(true);
+        http.logout()
+                .permitAll()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")
+                .invalidateHttpSession(true);
 
-	}
+    }
 
-	@Bean
-	public BCryptPasswordEncoder getPasswordEncoder(){
-		return new BCryptPasswordEncoder();
-	}
+    @Bean
+    public BCryptPasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public UserDetailsService userDetailsService(){
-		return new UserDetailsServiceImpl();
-	}
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl();
+    }
 
 }

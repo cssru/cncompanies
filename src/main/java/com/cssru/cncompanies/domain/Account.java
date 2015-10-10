@@ -10,49 +10,66 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table (name = "accounts")
+@Table(name = "accounts")
 public class Account {
-	@Id 
-	@Column
-	@GeneratedValue
-	private Long id;
+    @Id
+    @Column
+    @GeneratedValue
+    private Long id;
 
-	@OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(nullable = false)
-	private Human human;
-	
-	@Column (nullable = false, unique = true, length = 50)
-	private String login;
+    @Column(nullable = false, unique = true, length = 100)
+    private String login;
 
-	@Column (nullable = false, length = 255)
-	private String password;
+    @Column(nullable = false, length = 255)
+    private String password;
 
-	@Column (nullable = false, unique = true, length = 50)
-	private String email;
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
 
-	@Column (nullable = false)
-	private Boolean locked;
+    @Column(nullable = false, length = 100)
+    private String surname;
 
-	@Column (nullable = false)
-	private Boolean enabled;
+    @Column(nullable = false, length = 100)
+    private String name;
 
-	@Column (nullable = false)
-	private Date created;
+    @Column(nullable = false, length = 100)
+    private String lastname;
 
-	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
-	private Set<ProvidedService> providedServices;
+    @Column(nullable = false)
+    private Date created;
 
-	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-	private Set<Role> roles;
+    @Column(nullable = false)
+    private Date expires;
 
-	@OneToMany(mappedBy = "holder", cascade = CascadeType.ALL)
-	private Set<Company> companies;
+    @Column(nullable = false)
+    private Boolean enabled;
 
-	@Column (nullable = false)
-	private Integer money;
+    @Column(nullable = false)
+    private Boolean locked;
 
-	@Column (nullable = false)
-	private Long version;
+    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private Set<ProvidedService> providedServices;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.REMOVE)
+    private Set<Company> companies;
+
+    @Column(nullable = false)
+    private Integer money;
+
+    @Column(nullable = false)
+    private Long version;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || !(o instanceof Account)) return false;
+        Account account2 = (Account) o;
+        return id.equals(account2.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
     @PrePersist
     private void initNewEntity() {

@@ -12,13 +12,13 @@ import java.util.List;
 @Setter
 public class HumanDto extends Dto {
 
-	private Long id;
-	private String surname;
-	private String name;
-	private String lastname;
-	private String note;
-	private Date birthday;
-	private Long version;
+    private Long id;
+    private String surname;
+    private String name;
+    private String lastname;
+    private String note;
+    private Date birthday;
+    private Long version;
 
     @NotMapped
     private List<HumanMetadataElementDto> metadata = Collections.EMPTY_LIST;

@@ -1,5 +1,11 @@
 package com.cssru.cncompanies.web;
 
+import com.cssru.cncompanies.domain.Company;
+import com.cssru.cncompanies.domain.Login;
+import com.cssru.cncompanies.secure.Role;
+import com.cssru.cncompanies.service.AccountService;
+import com.cssru.cncompanies.service.CompanyService;
+import com.cssru.cncompanies.service.HumanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,129 +15,122 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.HumanService;
-import com.cssru.cncompanies.service.AccountService;
-
 @Controller
 public class CompanyController {
 
-	@Autowired
-	private CompanyService companyService;
+    @Autowired
+    private CompanyService companyService;
 
-	@Autowired
-	private AccountService accountService;
+    @Autowired
+    private AccountService accountService;
 
-	@Autowired
-	private LoginChecker loginChecker;
+    @Autowired
+    private LoginChecker loginChecker;
 
-	@Autowired
-	private HumanService humanService;
+    @Autowired
+    private HumanService humanService;
 
-	@RequestMapping(value = "/company.add", method = RequestMethod.GET)
-	public String displayAddCompanyForm(Model model) {
-		Login managerLogin = loginChecker.getRegisteredLogin();
-		try {
-			loginChecker.checkLogin(managerLogin);
-		} catch (BadLoginException ble) {
-			model.addAttribute("error", ble.getMessage());
-			return "error_page";
-		}
-		
-		if (!loginChecker.hasRole(Role.COMPANY_MANAGER)) {
-			return "redirect:/logout";
-		}
+    @RequestMapping(value = "/company.add", method = RequestMethod.GET)
+    public String displayAddCompanyForm(Model model) {
+        Login managerLogin = loginChecker.getRegisteredLogin();
+        try {
+            loginChecker.checkLogin(managerLogin);
+        } catch (BadLoginException ble) {
+            model.addAttribute("error", ble.getMessage());
+            return "error_page";
+        }
 
-		model.addAttribute("company", new Company());
-		return "new_company_form";
-	}
+        if (!loginChecker.hasRole(Role.COMPANY_MANAGER)) {
+            return "redirect:/logout";
+        }
 
-	@RequestMapping(value = "/company.add", method = RequestMethod.POST)
-	public String addCompany(@ModelAttribute("company") Company company, BindingResult result, Model model) {
+        model.addAttribute("company", new Company());
+        return "new_company_form";
+    }
 
-		if (!loginChecker.hasRole(Role.COMPANY_MANAGER)) {
-			return "redirect:/logout";
-		}
+    @RequestMapping(value = "/company.add", method = RequestMethod.POST)
+    public String addCompany(@ModelAttribute("company") Company company, BindingResult result, Model model) {
 
-		Login managerLogin = loginChecker.getRegisteredLogin();
-		try {
-			loginChecker.checkLogin(managerLogin);
-		} catch (BadLoginException ble) {
-			model.addAttribute("error", ble.getMessage());
-			return "error_page";
-		}
-		
-		company.setOwner(managerLogin.getHuman());
-		companyService.addCompany(company, managerLogin);
+        if (!loginChecker.hasRole(Role.COMPANY_MANAGER)) {
+            return "redirect:/logout";
+        }
 
-		model.addAttribute("company", company);
-		return "redirect:/company.list";
-	}
+        Login managerLogin = loginChecker.getRegisteredLogin();
+        try {
+            loginChecker.checkLogin(managerLogin);
+        } catch (BadLoginException ble) {
+            model.addAttribute("error", ble.getMessage());
+            return "error_page";
+        }
 
-	@RequestMapping(value = "/company.list")
-	public String listCompany(Model model) {
-		Login managerLogin = loginChecker.getRegisteredLogin();
-		try {
-			loginChecker.checkLogin(managerLogin);
-		} catch (BadLoginException ble) {
-			model.addAttribute("error", ble.getMessage());
-			return "error_page";
-		}
-		
-		model.addAttribute("owner", managerLogin);
-		model.addAttribute("listCompany", companyService.listCompany(managerLogin));
-		return "list_company";
-	}
+        company.setOwner(managerLogin.getHuman());
+        companyService.addCompany(company, managerLogin);
 
-	@RequestMapping("/company.delete/{companyId}")
-	public String deleteCompany(@PathVariable("companyId") Long companyId, Model model) {
-		Login managerLogin = loginChecker.getRegisteredLogin();
-		try {
-			loginChecker.checkLogin(managerLogin);
-		} catch (BadLoginException ble) {
-			model.addAttribute("error", ble.getMessage());
-			return "error_page";
-		}
-		
-		companyService.removeCompany(companyId, managerLogin);
-		return "redirect:/company.list";
-	}
+        model.addAttribute("company", company);
+        return "redirect:/company.list";
+    }
 
-	@RequestMapping(value = "/company.edit/{companyId}", method = RequestMethod.GET)
-	public String editCompany(@PathVariable("companyId") Long companyId, Model model) {
-		Login managerLogin = loginChecker.getRegisteredLogin();
-		try {
-			loginChecker.checkLogin(managerLogin);
-		} catch (BadLoginException ble) {
-			model.addAttribute("error", ble.getMessage());
-			return "error_page";
-		}
-		
-		Company company = companyService.getCompany(companyId, managerLogin);
+    @RequestMapping(value = "/company.list")
+    public String listCompany(Model model) {
+        Login managerLogin = loginChecker.getRegisteredLogin();
+        try {
+            loginChecker.checkLogin(managerLogin);
+        } catch (BadLoginException ble) {
+            model.addAttribute("error", ble.getMessage());
+            return "error_page";
+        }
 
-		if (company != null) {
-			model.addAttribute("company", company);
-			return "edit_company_form";
-		} else {
-			return "redirect:/logout";
-		}
-	}
+        model.addAttribute("owner", managerLogin);
+        model.addAttribute("listCompany", companyService.listCompany(managerLogin));
+        return "list_company";
+    }
 
-	@RequestMapping(value = "/company.edit", method = RequestMethod.POST)
-	public String updateCompany(@ModelAttribute("company") Company company, BindingResult result, Model model) {
-		Login managerLogin = loginChecker.getRegisteredLogin();
-		try {
-			loginChecker.checkLogin(managerLogin);
-		} catch (BadLoginException ble) {
-			model.addAttribute("error", ble.getMessage());
-			return "error_page";
-		}
-		
-		company.setOwner(managerLogin.getHuman());
-		companyService.updateCompany(company, managerLogin);
-		return "redirect:/company.list";
-	}
+    @RequestMapping("/company.delete/{companyId}")
+    public String deleteCompany(@PathVariable("companyId") Long companyId, Model model) {
+        Login managerLogin = loginChecker.getRegisteredLogin();
+        try {
+            loginChecker.checkLogin(managerLogin);
+        } catch (BadLoginException ble) {
+            model.addAttribute("error", ble.getMessage());
+            return "error_page";
+        }
+
+        companyService.removeCompany(companyId, managerLogin);
+        return "redirect:/company.list";
+    }
+
+    @RequestMapping(value = "/company.edit/{companyId}", method = RequestMethod.GET)
+    public String editCompany(@PathVariable("companyId") Long companyId, Model model) {
+        Login managerLogin = loginChecker.getRegisteredLogin();
+        try {
+            loginChecker.checkLogin(managerLogin);
+        } catch (BadLoginException ble) {
+            model.addAttribute("error", ble.getMessage());
+            return "error_page";
+        }
+
+        Company company = companyService.getCompany(companyId, managerLogin);
+
+        if (company != null) {
+            model.addAttribute("company", company);
+            return "edit_company_form";
+        } else {
+            return "redirect:/logout";
+        }
+    }
+
+    @RequestMapping(value = "/company.edit", method = RequestMethod.POST)
+    public String updateCompany(@ModelAttribute("company") Company company, BindingResult result, Model model) {
+        Login managerLogin = loginChecker.getRegisteredLogin();
+        try {
+            loginChecker.checkLogin(managerLogin);
+        } catch (BadLoginException ble) {
+            model.addAttribute("error", ble.getMessage());
+            return "error_page";
+        }
+
+        company.setOwner(managerLogin.getHuman());
+        companyService.updateCompany(company, managerLogin);
+        return "redirect:/company.list";
+    }
 }

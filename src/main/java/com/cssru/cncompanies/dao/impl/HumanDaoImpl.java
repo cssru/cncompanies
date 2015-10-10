@@ -2,7 +2,7 @@ package com.cssru.cncompanies.dao.impl;
 
 import com.cssru.cncompanies.dao.HumanDao;
 import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.domain.Unit;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,27 +18,27 @@ public class HumanDaoImpl implements HumanDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public void add(Human human) {
+    public void add(Employee employee) {
         Session currentSession = sessionFactory.getCurrentSession();
-        currentSession.save(human);
+        currentSession.save(employee);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Human> list(Unit unit) {
+    public List<Employee> list(Unit unit) {
         return sessionFactory
                 .getCurrentSession()
-                .createQuery("from Human as h where h.unit = :unit")
+                .createQuery("from Employee as h where h.unit = :unit")
                 .setParameter("unit", unit)
                 .list();
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Human> list(Company company) {
+    public List<Employee> list(Company company) {
         return sessionFactory
                 .getCurrentSession()
-                .createQuery("from Human as h where h.unit.company = :company")
+                .createQuery("from Employee as h where h.unit.company = :company")
                 .setParameter("company", company)
                 .list();
     }
@@ -46,10 +46,10 @@ public class HumanDaoImpl implements HumanDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Human> list(long version, Human manager) {
+    public List<Employee> list(long version, Employee manager) {
         return sessionFactory
                 .getCurrentSession()
-                .createQuery("from Human as h where h.version > :version and (h.unit.owner = :manager or h.unit.company.owner = :manager)")
+                .createQuery("from Employee as h where h.version > :version and (h.unit.owner = :manager or h.unit.company.owner = :manager)")
                 .setParameter("version", version)
                 .setParameter("manager", manager)
                 .list();
@@ -59,7 +59,7 @@ public class HumanDaoImpl implements HumanDao {
     public void delete(Long id) {
         Object persistentObject = sessionFactory
                 .getCurrentSession()
-                .load(Human.class, id);
+                .load(Employee.class, id);
         if (persistentObject != null) {
             // it also deletes associated HumanMetadataElements
             sessionFactory
@@ -69,30 +69,30 @@ public class HumanDaoImpl implements HumanDao {
     }
 
     @Override
-    public void delete(Human human) {
+    public void delete(Employee employee) {
         sessionFactory
                 .getCurrentSession()
-                .delete(human);
+                .delete(employee);
     }
 
     @Override
     public void deleteWithoutLogins() {
         sessionFactory
                 .getCurrentSession()
-                .createQuery("delete from Human as h where h not in (select l.human from Login as l)")
+                .createQuery("delete from Employee as h where h not in (select l.employee from Login as l)")
                 .executeUpdate();
     }
 
     @Override
-    public void update(Human human) {
-        sessionFactory.getCurrentSession().update(human);
+    public void update(Employee employee) {
+        sessionFactory.getCurrentSession().update(employee);
     }
 
     @Override
-    public Human get(Long id) {
-        return (Human)sessionFactory
+    public Employee get(Long id) {
+        return (Employee) sessionFactory
                 .getCurrentSession()
-                .createQuery("from Human as h where h.id = :id")
+                .createQuery("from Employee as h where h.id = :id")
                 .setParameter("id", id)
                 .uniqueResult();
     }

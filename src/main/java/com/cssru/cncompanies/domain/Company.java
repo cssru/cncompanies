@@ -9,42 +9,47 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name="companies")
+@Table(name = "companies")
 public class Company {
 
-	@Id
-	@Column
-	@GeneratedValue
-	private Long id;
+    @Id
+    @Column
+    @GeneratedValue
+    private Long id;
 
-	@Column (nullable = false, length = 100)
-	private String name;
-	
-	@ManyToOne
-	@JoinColumn (nullable = false)
-	private Human manager;
+    @Column(nullable = false, length = 100)
+    private String name;
 
-	@ManyToOne
-	@JoinColumn (nullable = false)
-	private Account holder;
+    @Column(length = 4096)
+    private String description;
 
-	@Column (length = 2048)
-	private String description;
+    @OneToOne
+    @JoinColumn(nullable = false)
+    private Staff staff;
 
-	@Column (nullable = false)
-	private Long version;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Account account;
 
-    @OneToMany (mappedBy = "company")
+    @Column(nullable = false)
+    private Long version;
+
+    @OneToMany(mappedBy = "company")
     private List<Unit> units;
 
-	@Override
-	public boolean equals(Object c) {
-		if (c == null || !(c instanceof Company)) return false;
-		return getId().equals(((Company)c).getId());
-	}
+    @Override
+    public boolean equals(Object c) {
+        if (c == null || !(c instanceof Company)) return false;
+        return getId().equals(((Company) c).getId());
+    }
 
-	@PrePersist
-	private void initNewEntity() {
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @PrePersist
+    private void initNewEntity() {
         setVersion(0L);
     }
 

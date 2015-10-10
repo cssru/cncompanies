@@ -1,16 +1,14 @@
 package com.cssru.cncompanies.dto;
 
 import com.cssru.cncompanies.domain.Account;
-import com.cssru.cncompanies.domain.Human;
+import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.domain.ProvidedService;
 import org.junit.Test;
 
 import java.util.Date;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class DtoTest {
 
@@ -18,7 +16,7 @@ public class DtoTest {
     public void testDtoMapFrom() throws Exception {
         Account account = new Account();
         account.setId(555L);
-        account.setHuman(new Human());
+        account.setEmployee(new Employee());
         account.setLogin("testLogin");
         account.setEmail("test@email.com");
         account.setLocked(true);

@@ -9,28 +9,28 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table (name = "provided_services")
+@Table(name = "provided_services")
 public class ProvidedService {
     @Column
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private Date begin;
 
-    @Column (nullable = false)
+    @Column(nullable = false)
     private Date end;
 
-    @Column (name = "paid_money", nullable = false)
+    @Column(name = "paid_money", nullable = false)
     private Integer paidMoney;
 
     @ManyToOne
-    @JoinColumn (nullable = false)
+    @JoinColumn(nullable = false)
     private Service service;
 
     @ManyToOne
-    @JoinColumn (nullable = false)
+    @JoinColumn(nullable = false)
     private Account account;
 
 }

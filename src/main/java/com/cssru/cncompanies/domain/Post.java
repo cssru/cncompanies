@@ -1,17 +1,17 @@
 package com.cssru.cncompanies.domain;
 
+import com.cssru.cncompanies.secure.Role;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "units")
-public class Unit {
-
+@Table(name = "posts")
+public class Post {
     @Id
     @Column
     @GeneratedValue
@@ -23,25 +23,18 @@ public class Unit {
     @Column(length = 4096)
     private String description;
 
-    @OneToOne
-    @JoinColumn(nullable = false)
-    private Staff staff;
+    @Column(nullable = false)
+    @Enumerated(EnumType.ORDINAL)
+    private Role role;
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Company company;
+    private Staff staff;
 
-    @Column(nullable = false)
-    private Long version;
+    @OneToMany(mappedBy = "executor")
+    private List<Task> tasks;
 
-    @PrePersist
-    private void initNewEntity() {
-        setVersion(0L);
-    }
-
-    @PreUpdate
-    private void setNextVersion() {
-        setVersion(getVersion() + 1L);
-    }
+    @OneToOne(mappedBy = "post")
+    private Employee employee;
 
 }

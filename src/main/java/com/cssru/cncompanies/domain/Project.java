@@ -16,17 +16,17 @@ public class Project {
     @GeneratedValue
     private Long id;
 
-    @Column (nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String name;
 
-    @Column (length = 4096)
+    @Column(length = 4096)
     private String description;
 
     @OneToOne
-    @JoinColumn (nullable = false)
-    private Human manager;
+    @JoinColumn(nullable = false)
+    private Employee manager;
 
-    @OneToMany (mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Task> tasks;
 
 }

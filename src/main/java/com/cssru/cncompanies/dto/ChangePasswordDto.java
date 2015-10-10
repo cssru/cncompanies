@@ -15,10 +15,10 @@ public class ChangePasswordDto extends Dto {
     @NotMapped
     private String oldPassword;
 
-    @MappedAs (propertyName = "password")
+    @MappedAs(propertyName = "password")
     private String newPassword;
 
     @NotMapped
-	private String newPassword2;
+    private String newPassword2;
 
 }

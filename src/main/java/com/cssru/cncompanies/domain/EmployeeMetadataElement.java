@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "task_metadata")
-public class TaskMetadataElement {
+@Table(name = "human_metadata")
+public class EmployeeMetadataElement {
 
     @Id
     @Column
@@ -18,7 +18,7 @@ public class TaskMetadataElement {
 
     @ManyToOne
     @JoinColumn(nullable = false)
-    private Task task;
+    private Employee employee;
 
     @Column(nullable = false)
     private Integer type;
