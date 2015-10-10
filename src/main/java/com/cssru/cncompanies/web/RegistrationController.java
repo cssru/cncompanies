@@ -3,7 +3,7 @@ package com.cssru.cncompanies.web;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.dto.AccountRegisterDto;
 import com.cssru.cncompanies.service.AccountService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -26,7 +26,7 @@ public class RegistrationController {
     private String mailLogin;
 
     @Autowired
-    HumanService humanService;
+    EmployeeService employeeService;
 
     @Autowired
     AccountService accountService;

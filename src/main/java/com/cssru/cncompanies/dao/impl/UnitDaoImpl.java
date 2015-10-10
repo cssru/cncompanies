@@ -1,7 +1,7 @@
 package com.cssru.cncompanies.dao.impl;
 
 import com.cssru.cncompanies.dao.CompanyDao;
-import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.EmployeeDao;
 import com.cssru.cncompanies.dao.UnitDao;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Employee;
@@ -22,7 +22,7 @@ public class UnitDaoImpl implements UnitDao {
     CompanyDao companyDao;
 
     @Autowired
-    HumanDao humanDao;
+    EmployeeDao employeeDao;
 
     @Override
     public void add(Unit unit) {

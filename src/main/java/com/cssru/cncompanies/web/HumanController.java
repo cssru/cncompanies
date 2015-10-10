@@ -35,7 +35,7 @@ public class HumanController {
     private LoginChecker loginChecker;
 
     @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     @Autowired
     private CompanyService companyService;
@@ -153,7 +153,7 @@ public class HumanController {
         }
 
         employee.setUnit(managerLogin.getHuman().getUnit());
-        humanService.updateHuman(employee, managerLogin);
+        employeeService.updateHuman(employee, managerLogin);
 
         return "redirect:/";
     }
@@ -172,7 +172,7 @@ public class HumanController {
         if (humanId == 0L) {
             loginToChange = ownerLogin;
         } else {
-            Employee employee = humanService.getHuman(humanId, ownerLogin);
+            Employee employee = employeeService.getHuman(humanId, ownerLogin);
             if (employee == null) {
                 model.addAttribute("error", "Доступ запрещен");
                 return "error_page";
@@ -207,7 +207,7 @@ public class HumanController {
             if (loginToChange == null) {
                 return "redirect:/logout";
             }
-            employeeToChange = humanService.getHuman(loginToChange.getHuman().getId(), ownerLogin);
+            employeeToChange = employeeService.getHuman(loginToChange.getHuman().getId(), ownerLogin);
             if (employeeToChange == null) {
                 return "redirect:/logout";
             }
@@ -248,7 +248,7 @@ public class HumanController {
             return "error_page";
         }
 
-        Employee employee = humanService.getHuman(humanId, managerLogin);
+        Employee employee = employeeService.getHuman(humanId, managerLogin);
         if (employee == null) {
             return "redirect:/logout";
         }
@@ -281,7 +281,7 @@ public class HumanController {
             return "error_page";
         }
 
-        Employee existingEmployee = humanService.getHuman(humanProxy.getId(), managerLogin);
+        Employee existingEmployee = employeeService.getHuman(humanProxy.getId(), managerLogin);
 
         Unit existingUnit = unitService.getUnit(humanProxy.getUnitId(), managerLogin);
 
@@ -293,7 +293,7 @@ public class HumanController {
             existingEmployee.setLastName(humanProxy.getLastName());
             existingEmployee.setNote(humanProxy.getNote());
             existingEmployee.setUnit(existingUnit);
-            humanService.updateHuman(existingEmployee, managerLogin);
+            employeeService.updateHuman(existingEmployee, managerLogin);
         }
 
         return "redirect:/employee.list/" + existingEmployee.getUnit().getId();
@@ -316,7 +316,7 @@ public class HumanController {
         }
 
         List<Employee> list = null;
-        list = humanService.listHuman(existingUnit, managerLogin);
+        list = employeeService.listHuman(existingUnit, managerLogin);
 
         if (list == null) {
             return "redirect:/logout";
@@ -343,11 +343,11 @@ public class HumanController {
             return "error_page";
         }
 
-        Employee existingEmployee = humanService.getHuman(humanId, managerLogin);
+        Employee existingEmployee = employeeService.getHuman(humanId, managerLogin);
         if (existingEmployee == null) {
             return "redirect:/logout";
         }
-        humanService.removeHuman(humanId, managerLogin);
+        employeeService.removeHuman(humanId, managerLogin);
         return "redirect:/employee.list/" + existingEmployee.getUnit().getId();
     }
 
@@ -560,7 +560,7 @@ public class HumanController {
             return errorContainer;
         }
 
-        SynchContainer<Employee> resp = humanService.synchronize(clientRequest, managerLogin);
+        SynchContainer<Employee> resp = employeeService.synchronize(clientRequest, managerLogin);
         return resp;
     }
 

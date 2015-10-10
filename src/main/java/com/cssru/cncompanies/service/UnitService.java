@@ -1,7 +1,6 @@
 package com.cssru.cncompanies.service;
 
 import com.cssru.cncompanies.dto.UnitDto;
-import com.cssru.cncompanies.exception.AccessDeniedException;
 
 import java.util.List;
 

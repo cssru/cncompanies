@@ -2,13 +2,12 @@ package com.cssru.cncompanies.service.impl;
 
 import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.dao.CompanyDao;
-import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.EmployeeDao;
 import com.cssru.cncompanies.dao.UnitDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.dto.CompanyDto;
-import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.CompanyService;
 import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class CompanyServiceImpl implements CompanyService {
     private UnitDao unitDao;
 
     @Autowired
-    private HumanDao humanDao;
+    private EmployeeDao employeeDao;
 
     @Autowired
     private AccountDao accountDao;
@@ -44,7 +43,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         // company manager not mapped
         if (companyDto.getManagerId() != null) {
-            Employee companyManager = humanDao.get(companyDto.getManagerId());
+            Employee companyManager = employeeDao.get(companyDto.getManagerId());
             if (companyManager == null) {
                 throw new AccessDeniedException();
             }
@@ -83,7 +82,7 @@ public class CompanyServiceImpl implements CompanyService {
 
         Account clientAccount = Utils.clientAccount(accountDao);
 
-        Employee manager = humanDao.get(managerId);
+        Employee manager = employeeDao.get(managerId);
 
         if (manager == null) {
             throw new AccessDeniedException();
@@ -146,7 +145,7 @@ public class CompanyServiceImpl implements CompanyService {
             if (companyDto.getManagerId() == null) { // if we need to set company's msnsger to null
                 company.setManager(null); // we do it
             } else {
-                Employee newManager = humanDao.get(companyDto.getManagerId()); // if new manager is not null, get it from database by given in DTO id
+                Employee newManager = employeeDao.get(companyDto.getManagerId()); // if new manager is not null, get it from database by given in DTO id
                 if (newManager == null) { // if no such Employee exists
                     throw new AccessDeniedException(); // then access must be denied
                 }

@@ -5,12 +5,10 @@ import com.cssru.cncompanies.ajax.AjaxEditRequest;
 import com.cssru.cncompanies.ajax.AjaxResponse;
 import com.cssru.cncompanies.ajax.AjaxResponseCodes;
 import com.cssru.cncompanies.domain.Employee;
-import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Task;
 import com.cssru.cncompanies.dto.TaskDto;
-import com.cssru.cncompanies.proxy.TaskJsonProxy;
 import com.cssru.cncompanies.service.AccountService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.synch.SynchContainer;
 import com.cssru.cncompanies.synch.SynchStatus;
@@ -31,10 +29,7 @@ public class TaskController {
     private AccountService accountService;
 
     @Autowired
-    private LoginChecker loginChecker;
-
-    @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     @Autowired
     private TaskService taskService;
@@ -50,7 +45,7 @@ public class TaskController {
             return "error_page";
         }
 
-        Employee executor = humanService.getHuman(humanId, managerLogin);
+        Employee executor = employeeService.getHuman(humanId, managerLogin);
         if (executor == null) {
             return "redirect:/logout";
         }
@@ -72,7 +67,7 @@ public class TaskController {
             return "error_page";
         }
 
-        Employee executor = humanService.getHuman(humanId, managerLogin);
+        Employee executor = employeeService.getHuman(humanId, managerLogin);
 
         if (executor == null) {
             return "redirect:/logout";
@@ -168,7 +163,7 @@ public class TaskController {
             model.addAttribute("showMyTasks", true);
         } else {
             // задачи другого человека
-            executor = humanService.getHuman(humanId, managerLogin);
+            executor = employeeService.getHuman(humanId, managerLogin);
         }
         if (executor == null) {
             return "redirect:/logout";
@@ -199,7 +194,7 @@ public class TaskController {
             model.addAttribute("showMyTasks", true);
         } else {
             // задачи другого человека
-            executor = humanService.getHuman(humanId, managerLogin);
+            executor = employeeService.getHuman(humanId, managerLogin);
         }
         if (executor == null) {
             return "redirect:/logout";
@@ -280,7 +275,7 @@ public class TaskController {
             model.addAttribute("showMyTasks", true);
         } else {
             // задачи другого человека
-            executor = humanService.getHuman(humanId, managerLogin);
+            executor = employeeService.getHuman(humanId, managerLogin);
             model.addAttribute("showMyTasks", false);
         }
         if (executor == null) {

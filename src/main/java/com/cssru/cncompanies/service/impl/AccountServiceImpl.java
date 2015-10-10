@@ -1,16 +1,15 @@
 package com.cssru.cncompanies.service.impl;
 
 import com.cssru.cncompanies.dao.AccountDao;
-import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.EmployeeDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.dto.AccountRegisterDto;
-import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import com.cssru.cncompanies.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,13 +28,13 @@ public class AccountServiceImpl implements AccountService {
     private TaskService taskService;
 
     @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     @Autowired
     private AccountDao accountDAO;
 
     @Autowired
-    private HumanDao humanDao;
+    private EmployeeDao employeeDao;
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -57,7 +56,7 @@ public class AccountServiceImpl implements AccountService {
         Employee employee = new Employee();
         employee.setSurname(accountDto.getSurname());
         employee.setName(accountDto.getName());
-        employee.setLastName(accountDto.getLastName());
+        employee.setLastname(accountDto.getLastname());
         employee.setNote(accountDto.getNote());
         employee.setBirthday(accountDto.getBirthday());
 
@@ -66,7 +65,7 @@ public class AccountServiceImpl implements AccountService {
         }
 
         account.setEmployee(employee);
-        humanDao.add(employee);
+        employeeDao.add(employee);
         accountDAO.add(account);
 
         return account;
@@ -111,7 +110,7 @@ public class AccountServiceImpl implements AccountService {
         if (passwordUpdate) {
             login.setPassword(passwordEncoder.encode(login.getPassword()));
         }
-        humanService.updateHuman(login.getHuman(), login);
+        employeeService.updateHuman(login.getHuman(), login);
         loginDAO.updateLogin(login);
     }
 

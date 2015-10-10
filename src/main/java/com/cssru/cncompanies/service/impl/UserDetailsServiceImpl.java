@@ -1,75 +1,48 @@
 package com.cssru.cncompanies.service.impl;
 
-import com.cssru.cncompanies.domain.Company;
-import com.cssru.cncompanies.domain.Login;
-import com.cssru.cncompanies.domain.Unit;
-import com.cssru.cncompanies.exception.AccessDeniedException;
-import com.cssru.cncompanies.secure.HumanGrantedAuthority;
-import com.cssru.cncompanies.secure.Role;
-import com.cssru.cncompanies.service.AccountService;
-import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.UnitService;
+import com.cssru.cncompanies.dao.AccountDao;
+import com.cssru.cncompanies.dao.EmployeeDao;
+import com.cssru.cncompanies.domain.Account;
+import com.cssru.cncompanies.domain.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
+    @Autowired
+    AccountDao accountDao;
 
     @Autowired
-    private AccountService accountService;
+    EmployeeDao employeeDao;
 
-    @Autowired
-    private UnitService unitService;
-
-    @Autowired
-    private CompanyService companyService;
-
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String loginName) throws UsernameNotFoundException {
-        Login login = accountService.getLogin(loginName);
-        if (login == null) throw new UsernameNotFoundException("Пользователь " + loginName + " не найден");
-        Set<GrantedAuthority> roles = new HashSet<GrantedAuthority>();
-
-        List<Company> ownedCompanies = companyService.listCompany(login);
-        // если пользователь является администратором
-        if (login.getLogin().equalsIgnoreCase("admin")) {
-            roles.add(new HumanGrantedAuthority(Role.ADMIN));
-        } else
-            // пользователь является владельцем компании, если ему принадлежит хотя бы одна компания
-            if ((ownedCompanies != null && !ownedCompanies.isEmpty()) ||
-                    // или если он не принадлежит ни к одному подразделению
-                    // (только что зарегистрировался и еще не создал ни одной компании)
-                    (login.getHuman().getUnit() == null)) {
-                roles.add(new HumanGrantedAuthority(Role.COMPANY_MANAGER));
+        Account account = accountDao.get(loginName);
+        if (account == null) {
+            Employee employee = employeeDao.get(loginName);
+            if (employee == null) {
+                throw new UsernameNotFoundException("User " + loginName + " not exists");
             } else {
-                // если пользователь не владелец компании, то он может быть начальником подразделения
-                try {
-                    List<Unit> ownedUnits = unitService.listUnitsWithOwner(login.getHuman(), login);
-                    if (ownedUnits != null && !ownedUnits.isEmpty()) {
-                        roles.add(new HumanGrantedAuthority(Role.UNIT_MANAGER));
-                    } else {
-                        // иначе он - простой пользователь
-                        roles.add(new HumanGrantedAuthority(Role.USER));
-                    }
-                } catch (AccessDeniedException ade) {
-                    roles.add(new HumanGrantedAuthority(Role.USER));
-                }
+                return createUserFromEmployee(employee);
             }
-        UserDetails userDetails =
-                new User(login.getLogin(),
-                        login.getPassword(),
-                        roles);
+        } else {
+            return createUserFromAccount(account);
+        }
+    }
 
-        return userDetails;
+    private UserDetails createUserFromEmployee(Employee employee) {
+        return new User(employee.getLogin(),
+                employee.getPassword(),
+                Arrays.asList(new SimpleGrantedAuthority(employee.getPost().getRole().name())));
     }
 
 }

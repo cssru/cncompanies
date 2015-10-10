@@ -3,7 +3,6 @@ package com.cssru.cncompanies.service;
 import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Task;
-import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.proxy.TaskJsonProxy;
 import com.cssru.cncompanies.synch.SynchContainer;
 

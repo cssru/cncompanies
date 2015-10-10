@@ -13,7 +13,7 @@ public class AccountDto extends Dto {
     private Long id;
 
     @NotMapped
-    private HumanDto human;
+    private EmployeeDto human;
     private String login;
     private String email;
     private Boolean locked;

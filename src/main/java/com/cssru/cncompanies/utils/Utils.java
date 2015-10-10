@@ -3,7 +3,6 @@ package com.cssru.cncompanies.utils;
 import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Employee;
-import com.cssru.cncompanies.secure.HumanGrantedAuthority;
 import com.cssru.cncompanies.secure.Role;
 import org.springframework.security.core.context.SecurityContextHolder;
 

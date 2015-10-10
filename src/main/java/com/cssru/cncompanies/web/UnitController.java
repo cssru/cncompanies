@@ -8,7 +8,7 @@ import com.cssru.cncompanies.dto.UnitDto;
 import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import com.cssru.cncompanies.service.UnitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,7 +26,7 @@ import java.util.Map;
 @Controller
 public class UnitController {
     @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     @Autowired
     private AccountService accountService;
@@ -61,7 +61,7 @@ public class UnitController {
         unit.setCompany(company);
 
         Map<Long, String> humans = new LinkedHashMap<Long, String>();
-        List<Employee> humansFromCompany = humanService.listHuman(company, managerLogin);
+        List<Employee> humansFromCompany = employeeService.listHuman(company, managerLogin);
 
         humans.put(0L, "не определен");
         for (Employee h : humansFromCompany) {
@@ -91,7 +91,7 @@ public class UnitController {
         if (unitDto.getOwnerId() == 0L) {
             owner = null;
         } else {
-            owner = humanService.getHuman(unitDto.getOwnerId(), managerLogin);
+            owner = employeeService.getHuman(unitDto.getOwnerId(), managerLogin);
         }
 
         if (company != null) {
@@ -204,7 +204,7 @@ public class UnitController {
         }
 
         Map<Long, String> humans = new LinkedHashMap<Long, String>();
-        List<Employee> humansFromCompany = humanService.listHuman(existingUnit.getCompany(), managerLogin);
+        List<Employee> humansFromCompany = employeeService.listHuman(existingUnit.getCompany(), managerLogin);
 
         humans.put(0L, "не определен");
         for (Employee h : humansFromCompany) {
@@ -235,7 +235,7 @@ public class UnitController {
         if (unitProxy.getOwnerId().longValue() == 0L) {
             owner = null;
         } else {
-            owner = humanService.getHuman(unitProxy.getOwnerId(), managerLogin);
+            owner = employeeService.getHuman(unitProxy.getOwnerId(), managerLogin);
         }
 
         if (company != null) {

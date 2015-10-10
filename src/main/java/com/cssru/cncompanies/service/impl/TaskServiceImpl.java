@@ -4,10 +4,9 @@ import com.cssru.cncompanies.dao.TaskDao;
 import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.domain.Task;
-import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.proxy.TaskJsonProxy;
 import com.cssru.cncompanies.service.AccountService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import com.cssru.cncompanies.service.TaskService;
 import com.cssru.cncompanies.synch.ItemDescriptor;
 import com.cssru.cncompanies.synch.SynchContainer;
@@ -22,7 +21,7 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
 
     @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     @Autowired
     private AccountService accountService;
@@ -224,7 +223,7 @@ public class TaskServiceImpl implements TaskService {
                 Employee executor;
                 if (nextTask.getOwnerId() > 0) {
                     // find executor in database if defined
-                    executor = humanService.getHuman(nextTask.getOwnerId(), managerLogin);
+                    executor = employeeService.getHuman(nextTask.getOwnerId(), managerLogin);
                 } else {
                     // if executor id not defined, then executor is logged user (storing user's own task)
                     executor = managerLogin.getHuman();
@@ -248,11 +247,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void copyFromJsonProxy(TaskJsonProxy from, Task to, Login managerLogin) throws AccessDeniedException {
-        Employee owner = humanService.getHuman(from.getOwnerId(), managerLogin);
+        Employee owner = employeeService.getHuman(from.getOwnerId(), managerLogin);
         if (owner == null) owner = managerLogin.getHuman();
         to.setOwner(owner);
 
-        Employee author = humanService.getHuman(from.getAuthorId(), managerLogin);
+        Employee author = employeeService.getHuman(from.getAuthorId(), managerLogin);
         if (author == null) author = managerLogin.getHuman();
         to.setAuthor(author);
         to.setCreated(new Date(from.getCreated()));

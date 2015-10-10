@@ -2,14 +2,13 @@ package com.cssru.cncompanies.service.impl;
 
 import com.cssru.cncompanies.dao.AccountDao;
 import com.cssru.cncompanies.dao.CompanyDao;
-import com.cssru.cncompanies.dao.HumanDao;
+import com.cssru.cncompanies.dao.EmployeeDao;
 import com.cssru.cncompanies.dao.UnitDao;
 import com.cssru.cncompanies.domain.Account;
 import com.cssru.cncompanies.domain.Company;
 import com.cssru.cncompanies.domain.Employee;
 import com.cssru.cncompanies.domain.Unit;
 import com.cssru.cncompanies.dto.UnitDto;
-import com.cssru.cncompanies.exception.AccessDeniedException;
 import com.cssru.cncompanies.service.UnitService;
 import com.cssru.cncompanies.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ public class UnitServiceImpl implements UnitService {
     private UnitDao unitDao;
 
     @Autowired
-    private HumanDao humanDao;
+    private EmployeeDao employeeDao;
 
     @Autowired
     private CompanyDao companyDao;
@@ -54,7 +53,7 @@ public class UnitServiceImpl implements UnitService {
         // now current user has rights to add new Unit to company
 
         // check if unit manager is accessible for current user
-        Employee manager = humanDao.get(unitDto.getManagerId());
+        Employee manager = employeeDao.get(unitDto.getManagerId());
 
         if (manager == null) {
             throw new AccessDeniedException();
@@ -133,7 +132,7 @@ public class UnitServiceImpl implements UnitService {
         // now current user has rights to add new Unit to company
 
         // check if unit manager is accessible for current user
-        Employee manager = humanDao.get(unitDto.getManagerId());
+        Employee manager = employeeDao.get(unitDto.getManagerId());
 
         if (manager == null) {
             throw new AccessDeniedException();
@@ -213,7 +212,7 @@ public class UnitServiceImpl implements UnitService {
     public List<UnitDto> listByManager(Long managerId) throws AccessDeniedException {
         Account clientAccount = Utils.clientAccount(accountDao);
 
-        Employee employee = humanDao.get(managerId);
+        Employee employee = employeeDao.get(managerId);
 
         if (company == null) {
             throw new AccessDeniedException();

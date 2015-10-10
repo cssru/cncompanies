@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class HumanMetadataElementDto extends Dto {
+public class EmployeeMetadataElementDto extends Dto {
     private Long id;
     private Integer type;
     private Long numValue;

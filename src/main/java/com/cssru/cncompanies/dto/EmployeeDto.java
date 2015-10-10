@@ -10,9 +10,13 @@ import java.util.List;
 
 @Getter
 @Setter
-public class HumanDto extends Dto {
+public class EmployeeDto extends Dto {
 
     private Long id;
+    private String login;
+
+    @NotMapped
+    private String password;
     private String surname;
     private String name;
     private String lastname;
@@ -21,9 +25,9 @@ public class HumanDto extends Dto {
     private Long version;
 
     @NotMapped
-    private List<HumanMetadataElementDto> metadata = Collections.EMPTY_LIST;
+    private List<EmployeeMetadataElementDto> metadata = Collections.EMPTY_LIST;
 
     @NotMapped
-    private Long unitId;
+    private Long postId;
 
 }

@@ -1,7 +1,7 @@
 package com.cssru.cncompanies.config;
 
 import com.cssru.cncompanies.service.AccountService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ public class Scheduler {
     private AccountService accountService;
 
     @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     public Scheduler() {
     }

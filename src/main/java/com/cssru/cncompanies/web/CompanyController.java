@@ -5,7 +5,7 @@ import com.cssru.cncompanies.domain.Login;
 import com.cssru.cncompanies.secure.Role;
 import com.cssru.cncompanies.service.AccountService;
 import com.cssru.cncompanies.service.CompanyService;
-import com.cssru.cncompanies.service.HumanService;
+import com.cssru.cncompanies.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +28,7 @@ public class CompanyController {
     private LoginChecker loginChecker;
 
     @Autowired
-    private HumanService humanService;
+    private EmployeeService employeeService;
 
     @RequestMapping(value = "/company.add", method = RequestMethod.GET)
     public String displayAddCompanyForm(Model model) {
