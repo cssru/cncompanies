@@ -20,6 +20,27 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
+    public Employee get(Long id) {
+        return sessionFactory
+                .getCurrentSession()
+                .get(Employee.class, id);
+    }
+
+    @Override
+    public Employee get(String login) {
+        return (Employee) sessionFactory
+                .getCurrentSession()
+                .createQuery("from Employee where login = :login")
+                .setParameter("login", login)
+                .uniqueResult();
+    }
+
+    @Override
+    public void update(Employee employee) {
+        sessionFactory.getCurrentSession().update(employee);
+    }
+
+    @Override
     public void delete(Long id) {
         Employee persistentEmployee = sessionFactory
                 .getCurrentSession()
@@ -31,26 +52,4 @@ public class EmployeeDaoImpl implements EmployeeDao {
                     .delete(persistentEmployee);
         }
     }
-
-    @Override
-    public void update(Employee employee) {
-        sessionFactory.getCurrentSession().update(employee);
-    }
-
-    @Override
-    public Employee get(Long id) {
-        return sessionFactory
-                .getCurrentSession()
-                .get(Employee.class, id);
-    }
-
-    @Override
-    public Employee get(String login) {
-        return sessionFactory
-                .getCurrentSession()
-                .createQuery("from Employee where login = :login")
-                .setParameter("login", login)
-                .uniqueResult();
-    }
-
 }

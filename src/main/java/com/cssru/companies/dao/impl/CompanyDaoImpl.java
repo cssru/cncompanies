@@ -3,7 +3,6 @@ package com.cssru.companies.dao.impl;
 import com.cssru.companies.dao.CompanyDao;
 import com.cssru.companies.domain.Account;
 import com.cssru.companies.domain.Company;
-import com.cssru.companies.domain.Employee;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -18,23 +17,20 @@ public class CompanyDaoImpl implements CompanyDao {
     private SessionFactory sessionFactory;
 
     @Override
-    public void save(Company company) {
+    public void create(Company company) {
         sessionFactory.getCurrentSession().save(company);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public List<Company> listByManager(Employee manager) {
+    public Company get(Long id) {
         return sessionFactory
                 .getCurrentSession()
-                .createQuery("from Company where manager = :manager")
-                .setParameter("manager", manager)
-                .list();
+                .get(Company.class, id);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Company> listByHolder(Account holder) {
+    public List<Company> list(Account holder) {
         return sessionFactory
                 .getCurrentSession()
                 .createQuery("from Company where holder = :holder")
@@ -43,21 +39,19 @@ public class CompanyDaoImpl implements CompanyDao {
     }
 
     @Override
-    public void delete(Company company) {
-        sessionFactory.getCurrentSession().delete(company);
-    }
-
-    @Override
     public void update(Company company) {
         sessionFactory.getCurrentSession().update(company);
     }
 
     @Override
-    public Company get(Long id) {
-        return (Company) sessionFactory.getCurrentSession()
-                .createQuery("from Company as c where c.id = :id")
-                .setParameter("id", id)
-                .uniqueResult();
+    public void delete(Long id) {
+        Company persistedCompany = sessionFactory
+                .getCurrentSession()
+                .get(Company.class, id);
+        if (persistedCompany != null) {
+            sessionFactory
+                    .getCurrentSession()
+                    .delete(persistedCompany);
+        }
     }
-
 }

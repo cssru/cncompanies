@@ -7,9 +7,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
-
 @Repository
 public class AccountDaoImpl implements AccountDao {
 
@@ -36,10 +33,9 @@ public class AccountDaoImpl implements AccountDao {
     @SuppressWarnings("unchecked")
     @Override
     public Account get(Long id) {
-        return (Account) sessionFactory.getCurrentSession()
-                .createQuery("from Account as l where l.id = :id")
-                .setParameter("id", id)
-                .uniqueResult();
+        return sessionFactory
+                .getCurrentSession()
+                .get(Account.class, id);
     }
 
     @SuppressWarnings("unchecked")
@@ -63,33 +59,4 @@ public class AccountDaoImpl implements AccountDao {
     public void update(Account account) {
         sessionFactory.getCurrentSession().merge(account);
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Account> list() {
-        return sessionFactory
-                .getCurrentSession()
-                .createQuery("from Account")
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Account> getExpired(Date date) {
-        return sessionFactory
-                .getCurrentSession()
-                .createQuery("from Account where expired < :date")
-                .setParameter("date", date)
-                .list();
-    }
-
-    @Override
-    public Long getEmployeesCount(Account account) {
-        return (Long) sessionFactory
-                .getCurrentSession()
-                .createQuery("select count(*) from Employee as h where h.unit.company.owner = :employee")
-                .setParameter("employee", account.getEmployee())
-                .uniqueResult();
-    }
-
 }
