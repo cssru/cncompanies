@@ -2,10 +2,11 @@ package com.cssru.companies.dao.impl;
 
 import com.cssru.companies.dao.AccountDao;
 import com.cssru.companies.domain.Account;
-import com.cssru.companies.domain.Employee;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class AccountDaoImpl implements AccountDao {
@@ -40,23 +41,24 @@ public class AccountDaoImpl implements AccountDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Account get(Employee employee) {
-        return (Account) sessionFactory.getCurrentSession()
-                .createQuery("from Account where employee = :employee")
-                .setParameter("employee", employee)
-                .uniqueResult();
+    public List<Account> list() {
+        return sessionFactory
+                .getCurrentSession()
+                .createQuery("from Account")
+                .list();
+    }
+
+    @Override
+    public void update(Account account) {
+        sessionFactory.getCurrentSession().update(account);
     }
 
     @Override
     public void delete(Long id) {
-        Account persistentAccount = (Account) sessionFactory.getCurrentSession().load(Account.class, id);
+        Account persistentAccount = sessionFactory.getCurrentSession().get(Account.class, id);
         if (persistentAccount != null) {
             sessionFactory.getCurrentSession().delete(persistentAccount);
         }
     }
 
-    @Override
-    public void update(Account account) {
-        sessionFactory.getCurrentSession().merge(account);
-    }
 }

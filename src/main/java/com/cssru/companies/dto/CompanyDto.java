@@ -9,10 +9,10 @@ import lombok.Setter;
 public class CompanyDto extends Dto {
     private Long id;
     private String name;
+    private String description;
 
     @NotMapped
-    private Long managerId;
-
-    private String description;
-    private Long version;
+    private Long accountId;
+    @NotMapped
+    private Long staffId;
 }

@@ -24,7 +24,7 @@ public class Company {
     private String description;
 
     @OneToOne
-    @JoinColumn(nullable = false)
+    @JoinColumn
     private Staff staff;
 
     @ManyToOne

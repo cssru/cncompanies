@@ -4,7 +4,6 @@ import com.cssru.companies.dao.CompanyDao;
 import com.cssru.companies.dao.EmployeeDao;
 import com.cssru.companies.dao.UnitDao;
 import com.cssru.companies.domain.Company;
-import com.cssru.companies.domain.Employee;
 import com.cssru.companies.domain.Unit;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class UnitDaoImpl implements UnitDao {
     EmployeeDao employeeDao;
 
     @Override
-    public void add(Unit unit) {
+    public void create(Unit unit) {
         sessionFactory.getCurrentSession().save(unit);
     }
 
@@ -39,43 +38,26 @@ public class UnitDaoImpl implements UnitDao {
                 .list();
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Unit> list(Employee unitManager) {
-        return sessionFactory
-                .getCurrentSession()
-                .createQuery("from Unit where manager = :manager")
-                .setParameter("manager", unitManager)
-                .list();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<Unit> listVisible(Employee manager) {
-        return sessionFactory
-                .getCurrentSession()
-                .createQuery("from Unit where company.manager = :manager or manager = :manager")
-                .setParameter("manager", manager)
-                .list();
-    }
-
-    @Override
-    public void delete(Unit unit) {
-        sessionFactory.getCurrentSession().delete(unit);
-    }
-
     @Override
     public void update(Unit unit) {
-        sessionFactory.getCurrentSession().merge(unit);
+        sessionFactory.getCurrentSession().update(unit);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Unit persistentUnit = sessionFactory
+                .getCurrentSession()
+                .get(Unit.class, id);
+        if (persistentUnit != null) {
+            sessionFactory.getCurrentSession().delete(persistentUnit);
+        }
     }
 
     @Override
     public Unit get(Long id) {
-        return (Unit) sessionFactory
+        return sessionFactory
                 .getCurrentSession()
-                .createQuery("from Unit as u where u.id = :id")
-                .setParameter("id", id)
-                .uniqueResult();
+                .get(Unit.class, id);
     }
 
 }

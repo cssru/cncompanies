@@ -33,7 +33,7 @@ public class CompanyDaoImpl implements CompanyDao {
     public List<Company> list(Account holder) {
         return sessionFactory
                 .getCurrentSession()
-                .createQuery("from Company where holder = :holder")
+                .createQuery("from Company where account = :holder")
                 .setParameter("holder", holder)
                 .list();
     }

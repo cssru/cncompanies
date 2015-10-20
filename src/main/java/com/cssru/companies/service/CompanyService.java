@@ -1,20 +1,17 @@
 package com.cssru.companies.service;
 
-import com.cssru.companies.domain.Company;
 import com.cssru.companies.dto.CompanyDto;
 
 import java.util.List;
 
 public interface CompanyService {
-    void add(CompanyDto company) throws AccessDeniedException;
+    void create(CompanyDto company);
 
-    List<CompanyDto> list() throws AccessDeniedException;
+    CompanyDto get(Long id);
 
-    List<CompanyDto> list(Long managerId) throws AccessDeniedException;
+    List<CompanyDto> listByHolder(Long holderAccountId);
 
-    void delete(Long id) throws AccessDeniedException;
+    void delete(Long id);
 
-    void update(CompanyDto company) throws AccessDeniedException;
-
-    Company get(Long id) throws AccessDeniedException;
+    void update(CompanyDto company);
 }

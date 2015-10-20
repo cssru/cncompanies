@@ -1,7 +1,6 @@
 package com.cssru.companies.annotation.validator;
 
 import com.cssru.companies.annotation.PasswordMatches;
-import com.cssru.companies.dto.AccountRegisterDto;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

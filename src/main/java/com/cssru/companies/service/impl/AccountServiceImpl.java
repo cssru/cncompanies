@@ -1,130 +1,110 @@
 package com.cssru.companies.service.impl;
 
 import com.cssru.companies.dao.AccountDao;
-import com.cssru.companies.dao.EmployeeDao;
 import com.cssru.companies.domain.Account;
-import com.cssru.companies.domain.Employee;
-import com.cssru.companies.domain.Login;
-import com.cssru.companies.domain.Unit;
-import com.cssru.companies.dto.AccountRegisterDto;
+import com.cssru.companies.dto.AccountDto;
+import com.cssru.companies.dto.ChangePasswordDto;
+import com.cssru.companies.exception.PasswordChangeException;
 import com.cssru.companies.service.AccountService;
-import com.cssru.companies.service.CompanyService;
-import com.cssru.companies.service.EmployeeService;
-import com.cssru.companies.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
     @Autowired
-    private CompanyService companyService;
-
-    @Autowired
-    private TaskService taskService;
-
-    @Autowired
-    private EmployeeService employeeService;
-
-    @Autowired
-    private AccountDao accountDAO;
-
-    @Autowired
-    private EmployeeDao employeeDao;
+    private AccountDao accountDao;
 
     @Autowired
     PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
-    public Account create(AccountRegisterDto accountDto) {
-        return create(accountDto, null);
-    }
-
-    @Transactional
-    @Override
-    public Account create(AccountRegisterDto accountDto, Unit unit) {
+    public Account create(AccountDto accountDto) {
         Account account = new Account();
-        account.setLogin(accountDto.getLogin());
+
+        accountDto.mapTo(account);
         account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        account.setEmail(accountDto.getEmail());
-
-        Employee employee = new Employee();
-        employee.setSurname(accountDto.getSurname());
-        employee.setName(accountDto.getName());
-        employee.setLastname(accountDto.getLastname());
-        employee.setNote(accountDto.getNote());
-        employee.setBirthday(accountDto.getBirthday());
-
-        if (unit != null) {
-            employee.setUnit(unit);
-        }
-
-        account.setEmployee(employee);
-        employeeDao.add(employee);
-        accountDAO.add(account);
+        accountDao.create(account);
 
         return account;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Account get(String userName) {
-        return accountDAO.get(userName);
+    public AccountDto get(String userName) {
+        Account account = accountDao.get(userName);
+        AccountDto accountDto = new AccountDto();
+
+        if (account != null) {
+            accountDto.mapFrom(account);
+        }
+
+        return accountDto;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Account get(Long id) {
-        return accountDAO.get(id);
+    public AccountDto get(Long id) {
+        Account account = accountDao.get(id);
+        AccountDto accountDto = new AccountDto();
+
+        if (account != null) {
+            accountDto.mapFrom(account);
+        }
+
+        return accountDto;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Account get(Employee employee) {
-        return accountDAO.get(employee);
+    public List<AccountDto> list() {
+        List<Account> accountList = accountDao.list();
+        List<AccountDto> accountDtoList = new ArrayList<>(accountList.size());
+
+        for (Account nextAccount : accountList) {
+            AccountDto nextAccountDto = new AccountDto();
+            nextAccountDto.mapFrom(nextAccount);
+            accountDtoList.add(nextAccountDto);
+        }
+
+        return accountDtoList;
+    }
+
+    @Transactional
+    @Override
+    public void update(AccountDto accountDto) {
+        Account account = accountDao.get(accountDto.getId());
+
+        if (account != null) {
+            accountDto.mapTo(account);
+            accountDao.update(account);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void changePassword(ChangePasswordDto changePasswordDto) throws PasswordChangeException {
+        Account account = accountDao.get(changePasswordDto.getLoginName());
+
+        if (account != null) {
+            if (passwordEncoder.matches(changePasswordDto.getOldPassword(), account.getPassword())) {
+                account.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+                accountDao.update(account);
+            } else {
+                throw new PasswordChangeException("Incorrect old password");
+            }
+        }
     }
 
     @Transactional
     @Override
     public void delete(Long id) {
-        accountDAO.delete(id);
-    }
-
-    @Transactional
-    @Override
-    public void removeExpired(Date now) {
-        List<Account> expired = accountDAO.getExpired(now);
-        for (Account account : expired) {
-            accountDAO.delete(account.getId());
-        }
-    }
-
-    @Transactional
-    @Override
-    public void updateLogin(Login login, boolean passwordUpdate) throws AccessDeniedException {
-        if (passwordUpdate) {
-            login.setPassword(passwordEncoder.encode(login.getPassword()));
-        }
-        employeeService.updateHuman(login.getHuman(), login);
-        loginDAO.updateLogin(login);
-    }
-
-
-    @Transactional(readOnly = true)
-    @Override
-    public List<Login> admListUser() {
-        return loginDAO.admListUser();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Long getEmployeesCount(Login login) {
-        return loginDAO.getEmployeesCount(login);
+        accountDao.delete(id);
     }
 
 }

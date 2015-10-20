@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 public class Dto {
 
     // only for Object fields, not for primitives
-    public void mapTo(Object entity) throws DtoMappingException {
+    public final void mapTo(Object entity) throws DtoMappingException {
         Field[] localFields = this.getClass().getDeclaredFields();
         for (Field nextField : localFields) {
 
@@ -39,7 +39,7 @@ public class Dto {
     }
 
     // only for Object fields, not for primitives
-    public void mapFrom(Object entity) {
+    public final void mapFrom(Object entity) {
         Field[] localFields = this.getClass().getDeclaredFields();
         for (Field nextField : localFields) {
 

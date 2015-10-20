@@ -4,7 +4,6 @@ import com.cssru.companies.domain.Company;
 import com.cssru.companies.domain.Employee;
 import com.cssru.companies.domain.Login;
 import com.cssru.companies.domain.Unit;
-import com.cssru.companies.dto.AccountRegisterDto;
 import com.cssru.companies.dto.ChangePasswordDto;
 import com.cssru.companies.proxy.HumanWrapper;
 import com.cssru.companies.proxy.PayProxy;

@@ -1,7 +1,6 @@
 package com.cssru.companies.web;
 
 import com.cssru.companies.domain.Login;
-import com.cssru.companies.dto.AccountRegisterDto;
 import com.cssru.companies.service.AccountService;
 import com.cssru.companies.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;

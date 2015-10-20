@@ -1,31 +1,24 @@
 package com.cssru.companies.service;
 
 import com.cssru.companies.domain.Account;
-import com.cssru.companies.domain.Employee;
-import com.cssru.companies.domain.Unit;
-import com.cssru.companies.dto.AccountRegisterDto;
+import com.cssru.companies.dto.AccountDto;
+import com.cssru.companies.dto.ChangePasswordDto;
+import com.cssru.companies.exception.PasswordChangeException;
 
-import java.util.Date;
 import java.util.List;
 
 public interface AccountService {
-    Account create(AccountRegisterDto accountDto);
+    Account create(AccountDto accountDto);
 
-    Account create(AccountRegisterDto accountDto, Unit unit);
+    AccountDto get(String userName);
 
-    Account get(String userName);
+    AccountDto get(Long id);
 
-    Account get(Long id) throws AccessDeniedException;
+    List<AccountDto> list();
 
-    Account get(Employee employee) throws AccessDeniedException;
+    void update(AccountDto accountDto);
 
-    void delete(Long id) throws AccessDeniedException;
+    void changePassword(ChangePasswordDto chagePasswordDto) throws PasswordChangeException;
 
-    void removeExpired(Date now);
-
-    void update(Account account, boolean passwordUpdate) throws AccessDeniedException;
-
-    List<Account> list();
-
-    Long getEmployeesCount(Account login);
+    void delete(Long id);
 }

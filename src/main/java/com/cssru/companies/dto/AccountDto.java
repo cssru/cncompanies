@@ -5,24 +5,25 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.Set;
 
 @Getter
 @Setter
 public class AccountDto extends Dto {
     private Long id;
-
-    @NotMapped
-    private EmployeeDto human;
     private String login;
-    private String email;
-    private Boolean locked;
-    private Boolean enabled;
-    private Date created;
 
     @NotMapped
-    private Set<ProvidedServiceDto> providedServices;
-    private Integer money;
-    private Long version;
+    private String password;
 
+    @NotMapped
+    private String passwordRepeat;
+
+    private String surname;
+    private String name;
+    private String lastname;
+    private String email;
+    private Date created;
+    private Date expires;
+    private Boolean enabled;
+    private Boolean locked;
 }
